@@ -9,10 +9,6 @@
      
 \sloppy
 
-
-% if you are using PDF LaTex and you cannot find a way for producing
-% letter, the following explicit settings may help
- 
 \pdfpagewidth=8.5truein
 \pdfpageheight=11truein
 
@@ -30,7 +26,6 @@
 \title{Reinforcement learning for route choice in an abstract traffic scenario}
 
 % AUTHORS
-
 
 % For initial submission, do not give author names, but the
 % tracking number, instead, as the review process is blind.
@@ -104,7 +99,7 @@ The remainder of this document is organized as follows: Section \ref{sec:concept
 \label{sec:concepts}
 \subsection{Commuting and traffic flow}
 
-In traffic engineering, a road network can be modeled as a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or distance.
+A road network can be modeled as a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or distance.
 
 A subset of the nodes contains the origins of the road network, where drivers start their trips, and another subset represents the destinations, where drivers finish their trips. Usually, in a commuting scenario, a driver has to travel from an origin to a destination (an OD pair). A driver's trip consists on a set of links, forming a route between his OD pair among the available routes.
 
@@ -114,8 +109,8 @@ Traffic flow is defined by the number of entities that use a network link in a g
 
 Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interaction with the environment. The agent perceives the environment state, chooses an action available on that state, and then receive a reinforcement signal from the environment. This signal is related to the new state reached by the agent. The agent's goal is to increase the long-run sum of the reinforcement signals received \cite{Kaelbling+1996}.
 
-Usually a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists on a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. $T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
-
+Usually a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. $T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
+%TODO resume from here
 The optimal value of a state, $V^*(s)$, is the expected infinite discounted sum of rewards that the agent gains by starting at state $s$ and following the optimal policy. A policy $(\pi)$ maps the current environment state $s \in S$ to an action $a \in A$ to be performed by the agent. The optimal policy $(\pi^*)$ represents the mapping from states to actions which maximizes the future reward.
 
 In order to converge to the optimal policy, the algorithms of value iteration and policy iteration can be used. In policy iteration, the value function is estimated (policy evaluation), then this estimation is used to change the policy, until the policy converge to optimal. To accelerate this process, value iteration is used: it truncates the policy evaluation phase after one step, thus changing the policy at each step.
