@@ -1,0 +1,51 @@
+10 			;numero de nos
+24			;num. arestas
+8 			;comprimento 'ideal' da aresta
+
+;coordenadas dos nos
+1 -14 0
+2 -9 8
+3 -7 0
+4 -8 -8
+5 0 8
+6 4 0
+7 3 -8
+8 10 8
+9 12 -8
+10 16 0
+
+;arestas de ligacao
+;id origem destino
+1 1 2 false
+2 1 3 false
+3 1 4 false
+
+4 2 3 false
+5 2 4 false
+6 2 5 false
+
+7 3 4 false
+8 3 5 false
+9 3 6 false
+
+10 4 5 false
+11 4 6 false
+12 4 7 false
+
+13 5 6 false
+14 5 7 false
+15 5 8 false
+
+16 6 7 false
+17 6 8 false
+18 6 9 false
+
+19 7 8 false
+20 7 9 false
+21 7 10 false
+
+22 8 9 false
+23 8 10 false
+
+24 9 10 false
+

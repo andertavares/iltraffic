@@ -1,0 +1,36 @@
+"BehaviorSpace results (NetLogo 4.1.3)"
+"RL_TAv2.nlogo"
+"standard"
+"12/12/2011 20:53:31:999 -0200"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-16","16","-16","16"
+"[run number]"
+"travel-time-alpha",
+"three-ten",
+"cap-randomness",
+"travel-time-beta",
+"two-ten",
+"q-learning-gamma",
+"three-nine",
+"route-weight-power",
+"q-learning-alpha",
+"num-drivers",
+"epsilon",
+"three-eight",
+"inst-road-view?",
+"reward-by",
+"roads-capacity",
+"plot-capacity?",
+"one-eight",
+"one-nine",
+"two-eight",
+"one-ten",
+"two-nine",
+"[reporter]"
+"[final]",
+"[min]",
+"[max]",
+"[mean]",
+"[steps]",
+
+"[all run data]"
