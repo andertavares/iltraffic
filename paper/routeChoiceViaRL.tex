@@ -115,11 +115,11 @@ Usually a reinforcement learning problem is modeled as a Markov Decision Process
 
 The optimal value of a state, $V^*(s)$, is the expected infinite discounted sum of rewards that the agent gains by starting at state $s$ and following the optimal policy. A policy $(\pi)$ maps the current environment state $s \in S$ to an action $a \in A$ to be performed by the agent. The optimal policy $(\pi^*)$ represents the mapping from states to actions which maximizes the future reward.
 
-For the next sections it will be assumed that the reader is familiar with Q-learning, a model-free RL algorithm. A model-free algorithm is one that does not rely on estimations of $R$ and $T$. For more information about model-free algorithms in general, the reader may refer to \cite{Kaelbling+2006} and for more information about Q-learning, the reader may refer to  \cite{Watkins&Dayan1992}.
+For the next sections it will be assumed that the reader is familiar with Q-learning, a model-free RL algorithm. A model-free algorithm is one that does not rely on estimations of $R$ and $T$. For more information about model-free algorithms in general, the reader may refer to \cite{Kaelbling+1996} and for more information about Q-learning, the reader may refer to  \cite{Watkins&Dayan1992}.
 
 \subsection{Multiagent Reinforcement Learning}
 A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, thus making the adoption of learning (or adapting) agents a feasible alternative \cite{Busoniu+2008}.
-%TODO resume from here
+
 For the single-agent reinforcement learning task, consistent algorithms with good convergence are known. When it comes to multiagent systems, several challenges arise. Each agent must adapt itself to the environment and to the other agents behaviors. This adaptation demands other agents to adapt themselves, changing their behaviors, thus demanding the first to adapt again. This nonstationarity turns the convergence properties of single-agent RL algorithms invalid.
 
 %Multiagent reinforcement learning (MARL) tasks can be modeled after the multiagent Markov decision process (MMDP), also called stochastic game (SG), which is the generalization of the single-agent Markov decision process. A stochastic game consists on a discrete set of environment states $(S)$, a collection of action sets $(A_1 ... A_k)$, a transition function $(T: S \times A_1 \times ... \times A_k \to \Pi(S))$ and a per-agent reward function $(R_i: S \times A_1 \times ... \times A_k \to \mathbb{R})$. The transition function maps the combined actions that each agent from $1$ to $k$ took at the current state to a probability distribution over $S$. For each agent $i$, the reward depends not only on his action at a given state, but on all other agents actions too. 
@@ -148,18 +148,18 @@ More recently, the minority game algorithm was modified for use in a complex sce
 
 \subsection{Reinforcement learning for route choice}
 
-In this study, one agent will consider the others as part of the environment, following the concept of independent learners. Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998, Tan1993, Sen+1994}. In all these works, empirical policy convergence was achieved, though \cite{Claus&Boutilier1998} demonstrates that Q-learning is not as robust as it is in single-agent settings and studies whether the found equilibrium is optimal.
+In this study, one agent will consider the others as part of the environment, following the concept of independent learners. Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998, Tan1993, Sen+1994}.
 
-The present study is an application of the independent learners concept in an competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario, expanding the horizon achieved on prior works.
+The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario. %, expanding the horizon achieved on prior works.
 
-The Markov decision process for this problem was modeled as follows: there will be no states on the scenario. The set of actions are the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is. There will be three reward functions, which will be depicted on section \ref{sec:reward}. There is no need of a transition function as there are no states on this problem.
+The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether that link belongs to an possible route for that agent. The reward function is explained on section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
 
 \subsection{The algorithm}
-
+%TODO revisar equacoes...
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculate the shortest route $P^*$ for his OD pair. As there are no different weights on network links, the shortest route is the one with less links between origin and destination. Then, for each driver, the expected travel time is calculated by the following equation:
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Then, for each driver, the expected travel time is calculated by the following equation:
 
 \begin{equation}
 \label{eq:ett}
