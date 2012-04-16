@@ -107,6 +107,15 @@ A subset of the nodes contains the origins of the road network, where drivers st
 
 Traffic flow is defined by the number of entities that use a network link in a given period of time. Capacity is understood as the number of traffic units that a link supports in a given instant of time. Load is understood as the demand generated on a link at a given moment. When demand reaches the link's maximum capacity, the congestion is formed.
 
+For each link $l$ of the road network, travel time ($t_l$) is a function of the number of vehicles on the link ($v$). The function parameters are the link's capacity ($c$) and the free-flow travel time of the link ($f$). Equation \eqref{eq:tt} shows the relation among these variables. It was chosen for the present work among the travel time formulas defined in \cite{Ortuzar&Willumsen2001} because it is suitable for the situation of ... %TODO describe why the equation is suitable
+
+\begin{equation}
+\label{eq:tt}
+t_l(v) = f_a[1 + \delta \left(\frac{v}{c_l}\right)^\beta]
+\end{equation}
+
+In this equation, $\delta$ and $\beta$ are... %TODO explain delta and beta; mudar delta (lembra gradiente)
+
 \subsection{Reinforcement Learning}
 
 Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interaction with the environment. The agent perceives the environment state, chooses an action available on that state, and then receive a reinforcement signal from the environment. This signal is related to the new state reached by the agent. The agent's goal is to increase the long-run sum of the reinforcement signals received \cite{Kaelbling+1996}.
@@ -159,111 +168,99 @@ The MDP for this problem is modeled as follows: the states are the nodes of the 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Then, for each driver, the expected travel time is calculated by the following equation:
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destination. This expectation is based on the length and the expected number of drivers on the route. In the present work, for each driver $i$, the expected travel time on his optimal route $e_{P_i^*}$ is given by the equation \eqref{eq:ett}, where $t_l$ is the travel time function defined in \eqref{eq:tt} and $v_e$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
 
 \begin{equation}
 \label{eq:ett}
-et_{P^*} = \sum_{a \in P^*} t_a(ex)
+e_{P_i^*} = \sum_{l \in P^*} t_l(v_e)
 \end{equation}
-
-Where $et_{P^*}$ is the estimated travel time on route $P^*$, $t_a$ is the travel time function. It is defined in \eqref{eq:tt} and is applied for each link $a$ of the shortest route $P^*$. The term $ex$ is the expected number of drivers on the same route. At the beginning of the simulation $ex$ is given by the number of drivers with the same OD pair of the driver calculating its expected travel time plus a random number in the range [-50:50]. This means that each driver has an estimation of the number of commuters who live in the same neighborhood and uses the same roads to reach their workplaces.
 
 \subsubsection{Execution}
 
-Each iteration (or episode) of this reinforcement learning for route choice algorithm follow the steps shown on Figure \ref{fig:flowchart}. Each step is depicted below.
+Each episode of this reinforcement learning for route choice algorithm follows the steps shown in Figure \ref{fig:flowchart}.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=7cm]{img/flowchart.png}}
     \caption{RL for route choice flowchart}
     \label{fig:flowchart}
 \end{figure}
-
-At step 1, drivers are hypothetically distributed among the outbound links of the nodes containing vehicles. This hypothetical distribution is proportional to the capacity of each link and will be compared to the actual distribution achieved by the drivers individual choices. At step 2, drivers choose an outbound link to traverse according to the $\epsilon$-greedy policy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 3, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 4 are repeated. At step 5, each driver $i$ calculate the travel time of the chosen route $P$. Drivers traversing the link $a$ of the road network experience the travel time $(t_a)$ given by the following function \cite{Ortuzar&Willumsen2001}:
-
-\begin{equation}
-\label{eq:tt}
-t_a(x) = f_a[1 + \alpha \left(\frac{x}{c_a}\right)^\beta]
-\end{equation}
-
-Where $x$ is the number of drivers on the link $a$. The constant $f_a$ is the free-flow travel time, a parameter of link $a$ which has capacity $c_a$. Then, for each driver, the travel time of the chosen route $P$ is given by the following formula:
+%TODO remove hypothetic distribution from the algorithm and discuss it on the text
+%TODO update algorithm regarding the Q tables update, which is made after each step
+At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $a$ on the chosen route $P_i$ according to equation \eqref{eq:att},  where $t_l$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $v$ being the number of drivers on link $l$.
 
 \begin{equation}
 \label{eq:att}
-at_P = \sum_{a \in P} t_a(x)
+a_{P_i} = \sum_{l \in P_i} t_l(v)
 \end{equation}
 
-Where $at_P$ is the actual travel time experienced by the driver on route $P$, $t_a$ is the travel time experienced on link $a$ (calculated via eq. \eqref{eq:tt}) with $x$ being the number of drivers on the link $a$.
-
-At step 6, drivers update the values on Q-tables with the entries corresponding to the links in route $P$ according to the Q-learning update formula:
+At step 5, drivers update the values on Q-tables with the entries corresponding to the links in route $P_i$ according to the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}
 
 \begin{equation}
 \label{eq:qlearning}
 Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 \end{equation}
 
-Where $Q(a)$ is the Q-value for action `choosing the link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}. %The discount factor is set to zero as there are no states on the problem modelling.
+%The discount factor is set to zero as there are no states on the problem modelling.
 
 \subsection{Reward function}
 \label{sec:reward}
 
-The reward function was designed with the goal of fostering driver to assume different behaviors. By traversing a road, a driver receive a reward R, defined as:
+The reward function was designed with the goal of fostering driver to assume different behaviors. By traversing a road, a driver receive a reward R, defined in equation \eqref{eq:rByCombination}, where $R_{t}$ is the reward component regarding the travel time, $R_{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
 
 \begin{equation}
 \label{eq:rByCombination}
-R = s(R_{tt}) + (1 - s)(R_{occ})
+R = s(R_t) + (1 - s)(R_o)
 \end{equation}
 
-Where $R_{tt}$ is the reward component regarding the travel time, $R_{occ}$ is the reward component regarding road occupation and `s' can be understood as a selfishness coefficient. Ranging from 0 to 1, it determines if the driver will prioritize his own welfare, trying to minimize his travel time (higher values of $s$) or the social welfare, tending to choose roads with less occupation (lower values of $s$).
+Ranging from 0 to 1, $s$ determines if the driver will try to minimize his travel time (higher values of $s$) choose roads with less occupation (lower values of $s$).
 
-
-The component regarding the travel time ($R_{tt}$) is given by:
+The component regarding the travel time ($R_t$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
 
 \begin{equation}
 \label{eq:rByTravelTime}
-R_{tt} = - t_a(x) \times W
+R_t = - t_l(v)
 \end{equation}
 
-In this equation, $t_a(x)$ is the travel time function given by equation \eqref{eq:tt} with $x$ being the number of drivers on link $a$. $W$ is the route weight given by: $$W = \frac{at_P}{et_{P^*}}$$
-Where $at_P$ is the actual travel time experienced by the driver (eq. \eqref{eq:att}) and $et_{P^*}$ is the expected travel time for the driver (eq. \eqref{eq:ett}). The purpose of the route weight is to make the driver avoid apparently good links which result in bad options in subsequent decisions.
+%Where $at_P$ is the actual travel time experienced by the driver (eq. \eqref{eq:att}) and $et_{P^*}$ is the expected travel time for the driver (eq. \eqref{eq:ett}). The purpose of the route weight is to make the driver avoid apparently good links which result in bad options in subsequent decisions.
 
 In this component, the reward decreases as travel time increases. This is to foster drivers to choose routes which will result in smaller travel times. By using this component (higher values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers try to minimize individual travel times, making selfish choices. That is, if a congested link or route leads to the final destination faster than uncongested alternative, they are expected to choose the congested option. 
 
-The reward component regarding road occupation ($R_{occ}$) is given by:
+The reward component regarding road occupation ($R_o$) is given by equation \eqref{eq:rByRoadOcc}, where $c_l$ is the capacity of link $l$ and $v$ is the number of vehicles on this link.
 
 \begin{equation}
 \label{eq:rByRoadOcc}
-R_{occ} = \left(\frac{c_a}{x_a}\right) - 1
+R_o = \left(\frac{c_l}{v}\right) - 1
 \end{equation}
 
-Where $c_a$ is the capacity of link $a$ and $x_a$ is the number of vehicles on this link. This reward component will become positive if they choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices taking into account the social welfare, that is, to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
+This reward component will become positive if drivers choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices in order to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
 
 \subsection{Evaluation Metrics}
-In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, these metrics will be used:
+In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, the following metrics will be used: %TODO resume from here
 
 \begin{itemize}
-	\item Experiment average travel time (xATT): is the average of the mean travel time for all drivers along the 50 episodes. For this metric, lower values means better performance.
-	\item Actual and expected travel time difference (AEDIFF): This metric is calculated for each OD pair. On one episode, it is given by the difference between the average of actual travel time and the average of expected travel time for all drivers on the same OD pair. For the experiment, the values obtained are averaged over the number of episodes. It is desirable that this metric reaches negative values, this means that actual travel times are lower than driver's expectations.
-	\item Actual and proportional distribution difference (APDIFF): this metric is relative to the roads. For one road, it is given as the absolute value of the difference between the actual and the proportional number of vehicles in it. For the road network, it is given as the sum of the values obtained for all roads. The closer this metric gets to zero, the better, because this means that the distribution of vehicles on the network is close to the hypothetic proportional distribution.
+	\item Experiment average travel time (xATT): is the average of the mean travel time for all drivers along all the episodes. For this metric, lower values means better performance.
+	\item Actual and expected travel time difference (AEDIFF): This metric is calculated for each OD pair. In one episode, it is given by the difference between the average of actual travel time and the average of expected travel time for all drivers on the same OD pair. For the experiment, the values obtained are averaged over the number of episodes. It is desirable that this metric reaches negative values, which means that actual travel times are lower than driver's expectations.
+	\item Actual and hypothetical distribution difference (AHDIFF): this metric is relative to the roads. For one road, it is given as the absolute value of the difference between the actual and the proportional number of vehicles in it (reached by the hypothetical distribution mentioned in \ref{hypo}. For the road network, it is given as the sum of the values obtained for all roads. The closer this metric gets to zero the better, because this means that the distribution of vehicles on the network is close to the hypothetic proportional distribution.
 \end{itemize}
 
 \subsection{Studied scenario}
 
-In this work, the abstract road network used in the experiments is the same used by \cite{Galib&Moser2011}, for comparison purposes. It consists on 10 nodes and 24 links, as depicted on Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in 9 possible OD pairs. The network links have the same weight, representing no differences on their lengths.
+For comparison purposes, the abstract road network used in the present work is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. The network links have the same weights, representing no differences on their lengths.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=8.5cm]{img/roadnetwork.png}}
-    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers}
+    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers, nodes with upward arrows are the origins and downward arrows represent the destinations}
     \label{fig:roadnetwork}
 \end{figure}
 
-Each of the 1001 drivers on the experiment have a fixed OD pair through all the experiment which simulate a commuting scenario, like in a city with drivers living in different neighborhoods trying to reach their workplaces. Each iteration of the experiment represents this happening in the same time of one day.
+Each driver has a fixed OD pair through all the experiment.% which simulate a commuting scenario, like in a city with drivers living in different neighborhoods trying to reach their workplaces. Each iteration of the experiment represents this happening in the same time of one day.
 
 \section{Results and discussion}
 \label{sec:results}
 
 
 \subsection{Reward function and drivers' behaviors}
-In these experiments, the objective is to test the effect of the selfishness coefficient ($s$ in eq. \eqref{eq:rByCombination}) on drivers' behavior. Parameters' values are: $\alpha = 0.5, \gamma = 0.4, \epsilon = 0.1$ for the Q-learning based route choice algorithm. There will be 1001 drivers on the road network and roads' capacities are randomly assigned within the range [130:250] at the beginning of the simulation. For the travel time equation \eqref{eq:tt}, $\alpha = 1, \beta = 2$. This means that, as the number of drivers on a road increases, the travel time increases quadratically. The constant $f$ on equation \eqref{eq:tt} is set as 5 minutes for all links.
+In these experiments, the objective is to test the effect of the selfishness coefficient ($s$ in eq. \eqref{eq:rByCombination}) on drivers' behavior. Parameters' values are: $\alpha = 0.5, \gamma = 0.4, \epsilon = 0.1$ for the Q-learning based route choice algorithm. There are 1001 drivers on the road network and roads' capacities are randomly assigned within the range [130:250] at the beginning of the simulation. For the travel time equation \eqref{eq:tt}, $\alpha = 1, \beta = 2$. This means that, as the number of drivers on a road increases, the travel time increases quadratically. The constant $f$ on equation \eqref{eq:tt} is set as 5 minutes for all links.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=8.5cm]{img/carsDistribVersusS.png}}
