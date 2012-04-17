@@ -12,6 +12,22 @@
 \pdfpagewidth=8.5truein
 \pdfpageheight=11truein
 
+% Equation terms definition
+\newcommand{\route}[1]{\ensuremath{P_#1}}	%route for driver 'i'
+\newcommand{\optRoute}[1]{\ensuremath{P_#1^*}}	%optimal route for driver 'i'
+
+\newcommand{\travTime}{\ensuremath{t_l}} 	%travel time on link 'l'
+\newcommand{\fftt}{\ensuremath{f_l}} 		%free-flow travel time of link 'l'
+\newcommand{\linkCap}{\ensuremath{c_l}}		%capacity of link 'l'
+\newcommand{\veh}{\ensuremath{v}}		%number of vehicles
+
+\newcommand{\ett}[1]{\ensuremath{e_#1}}		%estimated travel time for agent 'i'
+\newcommand{\expVeh}{\ensuremath{v_e}}		%estimated number of vehicles
+
+\newcommand{\att}[1]{\ensuremath{a_#1}}		%actual travel time for driver 'i' on route P
+
+\newcommand{\reward}[1][]{\ensuremath{R_#1}}	%reward
+
 %\begin{document}
 
 % In the original styles from ACM, you would have needed to
@@ -107,14 +123,14 @@ A subset of the nodes contains the origins of the road network, where drivers st
 
 Traffic flow is defined by the number of entities that use a network link in a given period of time. Capacity is understood as the number of traffic units that a link supports in a given instant of time. Load is understood as the demand generated on a link at a given moment. When demand reaches the link's maximum capacity, the congestion is formed.
 
-For each link $l$ of the road network, travel time ($t_l$) is a function of the number of vehicles on the link ($v$). The function parameters are the link's capacity ($c$) and the free-flow travel time of the link ($f$). Equation \eqref{eq:tt} shows the relation among these variables. It was chosen for the present work among the travel time formulas defined in \cite{Ortuzar&Willumsen2001} because it is suitable for the situation of ... %TODO describe why the equation is suitable
+For each link $l$ of the road network, travel time ($\travTime$) is a function of the number of vehicles on the link ($\veh$). The function parameters are the link's capacity ($\linkCap$) and the free-flow travel time of the link ($\fftt$). Equation \eqref{eq:tt} shows the relation among these variables. It was chosen for the present work among the travel time formulas defined in \cite{Ortuzar&Willumsen2001} because it is suitable for the situation of ... %TODO describe why the equation is suitable
 
 \begin{equation}
 \label{eq:tt}
-t_l(v) = f_a[1 + \delta \left(\frac{v}{c_l}\right)^\beta]
+\travTime(\veh) = \fftt[1 + \tau \left(\frac{\veh}{\linkCap}\right)^\beta]
 \end{equation}
 
-In this equation, $\delta$ and $\beta$ are... %TODO explain delta and beta; mudar delta (lembra gradiente)
+In this equation, $\tau$ and $\beta$ are... %TODO explain delta and beta; mudar delta (lembra gradiente)
 
 \subsection{Reinforcement Learning}
 
@@ -168,11 +184,11 @@ The MDP for this problem is modeled as follows: the states are the nodes of the 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destination. This expectation is based on the length and the expected number of drivers on the route. In the present work, for each driver $i$, the expected travel time on his optimal route $e_{P_i^*}$ is given by the equation \eqref{eq:ett}, where $t_l$ is the travel time function defined in \eqref{eq:tt} and $v_e$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destination. This expectation is based on the length and the expected number of drivers on the route. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by the equation \eqref{eq:ett}, where $\travTime$ is the travel time function defined in \eqref{eq:tt} and $\expVeh$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
 
 \begin{equation}
 \label{eq:ett}
-e_{P_i^*} = \sum_{l \in P^*} t_l(v_e)
+\ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
 \subsubsection{Execution}
@@ -186,11 +202,11 @@ Each episode of this reinforcement learning for route choice algorithm follows t
 \end{figure}
 %TODO remove hypothetic distribution from the algorithm and discuss it on the text
 %TODO update algorithm regarding the Q tables update, which is made after each step
-At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $a$ on the chosen route $P_i$ according to equation \eqref{eq:att},  where $t_l$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $v$ being the number of drivers on link $l$.
+At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $\att{i}$ on the chosen route $\route{i}$ according to equation \eqref{eq:att},  where $\tt$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
 
 \begin{equation}
 \label{eq:att}
-a_{P_i} = \sum_{l \in P_i} t_l(v)
+\att{i} = \sum_{l \in \route{i}} \travTime(\veh)
 \end{equation}
 
 At step 5, drivers update the values on Q-tables with the entries corresponding to the links in route $P_i$ according to the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}
@@ -205,16 +221,16 @@ Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 \subsection{Reward function}
 \label{sec:reward}
 
-The reward function was designed with the goal of fostering driver to assume different behaviors. By traversing a road, a driver receive a reward R, defined in equation \eqref{eq:rByCombination}, where $R_{t}$ is the reward component regarding the travel time, $R_{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
+The reward function was designed with the goal of fostering driver to assume different behaviors. By traversing a road, a driver receive a reward $\reward{}$, defined in equation \eqref{eq:rByCombination}, where $\reward{t}$ is the reward component regarding the travel time, $\reward{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
 
 \begin{equation}
 \label{eq:rByCombination}
-R = s(R_t) + (1 - s)(R_o)
+\reward{} = s(\reward{t}) + (1 - s)(\reward{o})
 \end{equation}
 
 Ranging from 0 to 1, $s$ determines if the driver will try to minimize his travel time (higher values of $s$) choose roads with less occupation (lower values of $s$).
 
-The component regarding the travel time ($R_t$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
+The component regarding the travel time ($\reward{t}$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
 
 \begin{equation}
 \label{eq:rByTravelTime}
