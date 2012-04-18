@@ -177,10 +177,10 @@ In this study, one agent will consider the others as part of the environment, fo
 
 The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario. %, expanding the horizon achieved on prior works.
 
-The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether that link belongs to an possible route for that agent. The reward function is explained on section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
+The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is explained on section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
 
 \subsection{The algorithm}
-%TODO revisar equacoes...
+
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
@@ -196,12 +196,12 @@ At the beginning of execution, OD pairs are randomly distributed among drivers. 
 Each episode of this reinforcement learning for route choice algorithm follows the steps shown in Figure \ref{fig:flowchart}.
 
 \begin{figure}[ht]
-    \centerline{\includegraphics[width=7cm]{img/flowchart.png}}
-    \caption{RL for route choice flowchart}
+    \centerline{\includegraphics[width=7cm]{img/flowchart2.png}}
+    \caption{RL for route choice algorithm flowchart}
     \label{fig:flowchart}
 \end{figure}
-%TODO remove hypothetic distribution from the algorithm and discuss it on the text
-%TODO update algorithm regarding the Q tables update, which is made after each step
+%TODO discuss hypothetic distribution on the text
+
 At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $\att{i}$ on the chosen route $\route{i}$ according to equation \eqref{eq:att},  where $\tt$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
 
 \begin{equation}

@@ -117,6 +117,8 @@ to go
   
   do-plots
   
+  prepare-next-episode
+  
   tick
 end
 
@@ -449,6 +451,12 @@ to experience-travel-times
   ]
 end
 
+;sets up variables for the next episode
+to prepare-next-episode
+;  set q-learning-alpha q-learning-alpha * decay
+  set epsilon epsilon * decay
+end
+
 to-report avg-dev-episode
   let total-dev 0
   ask roads [
@@ -489,7 +497,7 @@ to update-q-table
       
       ;calcula a recompensa
       let reward 0
-      let rew-tt -1 * road-tt * (item (rid - 1) roads-weight) ^ route-weight-power
+      let rew-tt -1 * road-tt ;* (item (rid - 1) roads-weight) ^ route-weight-power
       let rew-occ rocc - 1;^ 2 ;(1 / rocc) - 1; cap/num-drv - 1
       
       
@@ -1090,9 +1098,9 @@ NIL
 HORIZONTAL
 
 BUTTON
-105
+102
 12
-168
+165
 45
 NIL
 go
@@ -1282,12 +1290,12 @@ Occupation:
 1
 
 BUTTON
-184
-30
-247
-63
-go 50
-repeat 50 [\ngo\n]
+179
+16
+276
+49
+go [num]
+repeat num-episodes [\ngo\n]
 NIL
 1
 T
@@ -1313,15 +1321,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-21
-225
-193
-258
+20
+227
+233
+260
 epsilon
 epsilon
 0
 1
-0.1
+0.01000000416606889
 .1
 1
 NIL
@@ -1717,6 +1725,28 @@ avg-occ-dev
 17
 1
 11
+
+INPUTBOX
+203
+49
+276
+109
+num-episodes
+100
+1
+0
+Number
+
+INPUTBOX
+204
+177
+262
+237
+decay
+0.95499259
+1
+0
+Number
 
 @#$#@#$#@
 WHAT IS IT?
