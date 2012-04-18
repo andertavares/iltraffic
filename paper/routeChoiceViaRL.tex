@@ -202,7 +202,9 @@ Each episode of this reinforcement learning for route choice algorithm follows t
 \end{figure}
 %TODO discuss hypothetic distribution on the text
 
-At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $\att{i}$ on the chosen route $\route{i}$ according to equation \eqref{eq:att},  where $\tt$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
+At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. Then, drivers update%%%%%%%%%
+
+If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $\att{i}$ on the chosen route $\route{i}$ according to equation \eqref{eq:att},  where $\tt$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
 
 \begin{equation}
 \label{eq:att}
