@@ -453,8 +453,8 @@ end
 
 ;sets up variables for the next episode
 to prepare-next-episode
-;  set q-learning-alpha q-learning-alpha * decay
-  set epsilon epsilon * decay
+  set q-learning-alpha q-learning-alpha * decay
+;  set epsilon epsilon * decay
 end
 
 to-report avg-dev-episode
@@ -1122,7 +1122,7 @@ q-learning-alpha
 q-learning-alpha
 0
 1
-0.5
+0.01000000416606889
 .1
 1
 NIL
@@ -1314,7 +1314,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-0.4
+0.8
 .1
 1
 NIL
@@ -1329,7 +1329,7 @@ epsilon
 epsilon
 0
 1
-0.01000000416606889
+0.1
 .1
 1
 NIL
