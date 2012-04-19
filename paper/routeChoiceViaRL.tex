@@ -103,15 +103,13 @@ Traffic movement in a commuting scenario is a phenomena that emerges from indivi
 \section{Introduction}
 The subject of traffic and mobility presents challenging issues to authorities, traffic engineers and researchers. To deal with the increasing demand, techniques and methods to optimize the existing road traffic network are attractive since they do not include expensive and environmental-impacting changes on infrastructure.
 
-In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles gets distributed on the road network proportionally to the capacity of each road. %These goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as \ref{Tumer&Wolpert2004} show.
-
-%TODO embasar Tumer&Wolpert2004
+In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles gets distributed on the road network proportionally to the capacity of each road. Multiagent systems like this commuting scenario, where each agent tries to maximize its own utility function, while at the same time there is an global utility which rates the whole system's behavior are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown on \cite{Tumer&Wolpert2004}.
 
 Traffic assignment deals with route choice between origin-destination pairs in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem. This approach uses no communication among drivers and makes no unrealistic assumptions such as the drivers having complete knowledge on real-time road traffic condition. In reinforcement learning problems, agents make decisions using only their own experience which is gained through interaction with the environment.
 
 The scenario studied in this work abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the several available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents traffic engineering and basic single and multiagent reinforcement learning concepts which will be used throughout this paper. Section \ref{sec:related} presents and discusses some related woks done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice algorithm whose results are discussed in section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents traffic engineering and basic single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses some related woks done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice algorithm whose results are discussed in section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
 
 \section{Concepts}
 \label{sec:concepts}
@@ -119,37 +117,35 @@ The remainder of this document is organized as follows: Section \ref{sec:concept
 
 A road network can be modeled as a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or distance.
 
-A subset of the nodes contains the origins of the road network, where drivers start their trips, and another subset represents the destinations, where drivers finish their trips. Usually, in a commuting scenario, a driver has to travel from an origin to a destination (an OD pair). A driver's trip consists on a set of links, forming a route between his OD pair among the available routes.
+A subset of the nodes contains the origins of the road network, where drivers start their trips, and another subset represents the destinations, where drivers finish their trips. In a commuting scenario, a driver's trip consists on a set of links, forming a route between his origin and destination (OD pair) among the available routes.
 
 Traffic flow is defined by the number of entities that use a network link in a given period of time. Capacity is understood as the number of traffic units that a link supports in a given instant of time. Load is understood as the demand generated on a link at a given moment. When demand reaches the link's maximum capacity, the congestion is formed.
 
-For each link $l$ of the road network, travel time ($\travTime$) is a function of the number of vehicles on the link ($\veh$). The function parameters are the link's capacity ($\linkCap$) and the free-flow travel time of the link ($\fftt$). Equation \eqref{eq:tt} shows the relation among these variables. It was chosen for the present work among the travel time formulas defined in \cite{Ortuzar&Willumsen2001} because it is suitable for the situation of ... %TODO describe why the equation is suitable
+Traffic assignment methods that consider congestion effects in urban settings needs a suitable cost function that relates link's attributes (capacity, free-flow travel time) and traffic flow on the entire road network. However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism. One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite{Ortuzar&Willumsen2001}.
 
 \begin{equation}
 \label{eq:tt}
 \travTime(\veh) = \fftt[1 + \tau \left(\frac{\veh}{\linkCap}\right)^\beta]
 \end{equation}
 
-In this equation, $\tau$ and $\beta$ are... %TODO explain delta and beta; mudar delta (lembra gradiente)
+In this function, $\travTime$ is the travel time on link $l$, $\linkCap$ is the link's capacity, $\fftt$ is the free-flow travel time on link $l$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
 
 \subsection{Reinforcement Learning}
 
 Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interaction with the environment. The agent perceives the environment state, chooses an action available on that state, and then receive a reinforcement signal from the environment. This signal is related to the new state reached by the agent. The agent's goal is to increase the long-run sum of the reinforcement signals received \cite{Kaelbling+1996}.
 
-Usually a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. $T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
+Usually, a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. $T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
 
 The optimal value of a state, $V^*(s)$, is the expected infinite discounted sum of rewards that the agent gains by starting at state $s$ and following the optimal policy. A policy $(\pi)$ maps the current environment state $s \in S$ to an action $a \in A$ to be performed by the agent. The optimal policy $(\pi^*)$ represents the mapping from states to actions which maximizes the future reward.
 
-For the next sections it will be assumed that the reader is familiar with Q-learning, a model-free RL algorithm. A model-free algorithm is one that does not rely on estimations of $R$ and $T$. For more information about model-free algorithms in general, the reader may refer to \cite{Kaelbling+1996} and for more information about Q-learning, the reader may refer to  \cite{Watkins&Dayan1992}.
+For the next sections it will be assumed that the reader is familiar with Q-learning. For more information about Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \subsection{Multiagent Reinforcement Learning}
-A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, thus making the adoption of learning (or adapting) agents a feasible alternative \cite{Busoniu+2008}.
+A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, so that the adoption of learning (or adapting) agents is a feasible alternative \cite{Busoniu+2008}.
 
 For the single-agent reinforcement learning task, consistent algorithms with good convergence are known. When it comes to multiagent systems, several challenges arise. Each agent must adapt itself to the environment and to the other agents behaviors. This adaptation demands other agents to adapt themselves, changing their behaviors, thus demanding the first to adapt again. This nonstationarity turns the convergence properties of single-agent RL algorithms invalid.
 
-%Multiagent reinforcement learning (MARL) tasks can be modeled after the multiagent Markov decision process (MMDP), also called stochastic game (SG), which is the generalization of the single-agent Markov decision process. A stochastic game consists on a discrete set of environment states $(S)$, a collection of action sets $(A_1 ... A_k)$, a transition function $(T: S \times A_1 \times ... \times A_k \to \Pi(S))$ and a per-agent reward function $(R_i: S \times A_1 \times ... \times A_k \to \mathbb{R})$. The transition function maps the combined actions that each agent from $1$ to $k$ took at the current state to a probability distribution over $S$. For each agent $i$, the reward depends not only on his action at a given state, but on all other agents actions too. 
-
-Single-agent RL tasks modeled as a MDP already have scalability issues on realistic problem sizes. The scalability gets worse for multi agent reinforcement learning (MARL). For this reason, some MARL tasks are tackled by making each agent learn without considering other agents adaptation. In this situation, on agent understands other agents learning and changing their behavior as a change of environment dynamics. In this approach, the agents follow the concept of independent learners \cite{Claus&Boutilier1998}. It is demonstrated in \cite{Claus&Boutilier1998} that in this case, Q-learning is not as robust as it is in single-agent settings. Also, it is remarked by \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Even so, some researchers achieved amazing results with this approach.
+Single-agent RL tasks modeled as a MDP already have scalability issues on realistic problem sizes and these issues gets worse for multi agent reinforcement learning (MARL). For this reason, some MARL tasks are tackled by making each agent learn without considering other agents adaptation. In this situation, one agent understands other agents learning and changing their behavior as a change of environment dynamics. In this approach, the agents follow the concept of independent learners \cite{Claus&Boutilier1998}. It is demonstrated in \cite{Claus&Boutilier1998} that in this case, Q-learning is not as robust as it is in single-agent settings. Also, it is remarked by \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Even so, some researchers achieved amazing results with this approach.
 
 \section{Related work}
 \label{sec:related}
@@ -177,14 +173,15 @@ In this study, one agent will consider the others as part of the environment, fo
 
 The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario. %, expanding the horizon achieved on prior works.
 
-The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is explained on section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
+The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is explained on Section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
 
 \subsection{The algorithm}
 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destination. This expectation is based on the length and the expected number of drivers on the route. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by the equation \eqref{eq:ett}, where $\travTime$ is the travel time function defined in \eqref{eq:tt} and $\expVeh$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destinations. 
+This expectation is based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by the equation \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} and $\expVeh$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
 
 \begin{equation}
 \label{eq:ett}
@@ -202,23 +199,31 @@ Each episode of this reinforcement learning for route choice algorithm follows t
 \end{figure}
 %TODO discuss hypothetic distribution on the text
 
-At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link. Then, drivers update%%%%%%%%%
+At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link and experience their travel times given by Eq. \eqref{eq:tt}.
 
-If this node is the driver's final destination (step 4), the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculate it's actual travel time $\att{i}$ on the chosen route $\route{i}$ according to equation \eqref{eq:att},  where $\tt$ is the travel time experienced by the driver $i$ on link $l$ (calculated via eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
+% given by Eq. \eqref{eq:att}, where $\att{i}$ is the travel time experienced by driver $i$ and $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
+%TODO realocate actual travel-time equation
+% \begin{equation}
+% \label{eq:att}
+% \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
+% \end{equation}
 
-\begin{equation}
-\label{eq:att}
-\att{i} = \sum_{l \in \route{i}} \travTime(\veh)
-\end{equation}
-
-At step 5, drivers update the values on Q-tables with the entries corresponding to the links in route $P_i$ according to the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}
+Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}.
 
 \begin{equation}
 \label{eq:qlearning}
 Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 \end{equation}
 
-%The discount factor is set to zero as there are no states on the problem modelling.
+%TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
+
+
+Step 4 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
+
+\begin{equation}
+\label{eq:att}
+\att{i} = \sum_{l \in \route{i}} \travTime(\veh)
+\end{equation}
 
 \subsection{Reward function}
 \label{sec:reward}
