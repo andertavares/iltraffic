@@ -101,6 +101,8 @@ Traffic movement in a commuting scenario is a phenomena that emerges from indivi
 %\keywords{Multiagent reinforcement learning, multiagent systems, traffic assignment}
 
 \section{Introduction}
+\label{sec:intro}
+
 The subject of traffic and mobility presents challenging issues to authorities, traffic engineers and researchers. To deal with the increasing demand, techniques and methods to optimize the existing road traffic network are attractive since they do not include expensive and environmental-impacting changes on infrastructure.
 
 In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles gets distributed on the road network proportionally to the capacity of each road. Multiagent systems like this commuting scenario, where each agent tries to maximize its own utility function, while at the same time there is an global utility which rates the whole system's behavior are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown on \cite{Tumer&Wolpert2004}.
@@ -109,7 +111,7 @@ Traffic assignment deals with route choice between origin-destination pairs in t
 
 The scenario studied in this work abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the several available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents traffic engineering and basic single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses some related woks done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice algorithm whose results are discussed in section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic traffic engineering, single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses related work done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice algorithm whose results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
 
 \section{Concepts}
 \label{sec:concepts}
@@ -173,7 +175,14 @@ In this study, one agent will consider the others as part of the environment, fo
 
 The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario. %, expanding the horizon achieved on prior works.
 
-The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is explained on Section \ref{sec:reward}. %There is no need of a transition function as there are no states on this problem.
+The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles ($\veh$) on the link the agent traversed.
+
+\begin{equation}
+\label{eq:reward}
+\reward{} = - \travTime(\veh)
+\end{equation}
+
+The reward decreases as travel time increases, so drivers will strive to minimize their individual travel times.
 
 \subsection{The algorithm}
 
@@ -210,14 +219,6 @@ Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 \end{equation}
 
 %TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
-The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles ($\veh$) on link $a$.
-
-\begin{equation}
-\label{eq:reward}
-\reward{} = - \travTime(\veh)
-\end{equation}
-
-The reward decreases as travel time increases, so drivers will strive to minimize their individual travel times.
 
 Step 4 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
 
@@ -261,17 +262,22 @@ Step 4 tests whether the node reached in step 2 is the driver's final destinatio
 \subsection{Performance evaluation}
 
 \subsubsection{Reasonable travel times}
-It was said that actual travel times experienced by the drivers can be considered reasonable when they are within the expected travel time.
+In Section \ref{sec:intro}, it was said that actual travel times experienced by the drivers can be considered reasonable when they are within the expected travel time.
 
-In a real world situation, drivers has an expectation on the travel time needed to reach their destinations based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
+In a real world situation, drivers have an expectation on the travel time needed to reach their destinations based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
 
 \begin{equation}
 \label{eq:ett}
 \ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-%TODO resume from here (add subsubsection about measures?)
+
 \subsubsection{Proportional distribution}
+
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
+
+The actual distribution of vehicles over the road network will be compared to a hypothetical distribution that is proportional to each road capacity........%TODO resume from here
+
 In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, the following metrics will be used: 
 
 \begin{itemize}

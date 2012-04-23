@@ -249,7 +249,23 @@ to update-history
 end
 
 to choose-next-road 
-  ask drivers [
+  
+  ask drivers [set current-road nobody] ;resets current-road
+  
+  ;workaround for link 19
+  ask drivers with [destination = 8] [
+    
+    if current-node = 7 [
+      show origin
+      set current-road one-of roads with [road-id = 19]
+      ask current-road [set num-drv num-drv + 1]
+      ;show current-road
+    ]
+    
+  ]
+  
+  ;drivers who has not chosen roads yet will choose now
+  ask drivers with [current-road = nobody] [
     if current-node = destination [stop] ;nao faz escolhas se ja tiver chegado
     
     let chosen-road nobody
@@ -263,9 +279,10 @@ to choose-next-road
       
       ;tests each of the outbound links from the current node
       ask my-out-links [
+        ;show self
         ;selects current road if it is not taken by the proper number of drivers and if it belongs to a feasible route
-        if num-drv < opt-num-drv and road-in-route myself myorig mydest 
-        [set chosen-road myself]
+        if num-drv < opt-num-drv and road-in-route self myorig mydest 
+        [set chosen-road self]
       ]
       
       ;if could not choose road, picks one that belongs to a feasible route at random
@@ -275,7 +292,7 @@ to choose-next-road
         [ set chosen-road nobody ]
       ]
     ]
-    
+    ;show chosen-road
     ;road chosen, increment number of drivers in it
     set current-road chosen-road  
     ask current-road [set num-drv num-drv + 1]
@@ -422,6 +439,7 @@ end
 ;diz se a via identificada por rid pertence ou nao 'a uma rota entre orig e dest
 to-report road-in-route [the-road orig dest]
   let inroute? false
+  ;show the-road
   ask the-road [
     set inroute? in-route orig dest
   ]
@@ -1157,7 +1175,7 @@ q-learning-alpha
 q-learning-alpha
 0
 1
-0.01000000416606889
+0.5
 .1
 1
 NIL
@@ -1252,7 +1270,7 @@ SWITCH
 73
 inst-road-view?
 inst-road-view?
-1
+0
 1
 -1000
 
@@ -1349,7 +1367,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-0.8
+0.4
 .1
 1
 NIL
@@ -1512,7 +1530,7 @@ PENS
 "road_16" 1.0 0 -16777216 true
 "road_17" 1.0 0 -16777216 true
 "road_18" 1.0 0 -16777216 true
-"road_19" 1.0 0 -16777216 true
+"road_19" 1.0 0 -2674135 true
 "road_20" 1.0 0 -16777216 true
 "road_21" 1.0 0 -16777216 true
 "road_22" 1.0 0 -16777216 true
@@ -1778,7 +1796,7 @@ INPUTBOX
 262
 237
 decay
-0.95499259
+1
 1
 0
 Number
