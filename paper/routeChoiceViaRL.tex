@@ -180,13 +180,7 @@ The MDP for this problem is modeled as follows: the states are the nodes of the 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
 \subsubsection{Initialization}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. In a real world situation, drivers has an expectation on the travel time needed to reach their destinations. 
-This expectation is based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by the equation \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} and $\expVeh$ is the estimation on the number of vehicles using the same route. This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination. 
-
-\begin{equation}
-\label{eq:ett}
-\ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
-\end{equation}
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. 
 
 \subsubsection{Execution}
 
@@ -208,7 +202,7 @@ At step 1 drivers choose an outbound link to traverse according to the $\epsilon
 % \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
 % \end{equation}
 
-Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. The reward function is discussed in section \ref{sec:reward}.
+Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$.
 
 \begin{equation}
 \label{eq:qlearning}
@@ -216,7 +210,14 @@ Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 \end{equation}
 
 %TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
+The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles ($\veh$) on link $a$.
 
+\begin{equation}
+\label{eq:reward}
+\reward{} = - \travTime(\veh)
+\end{equation}
+
+The reward decreases as travel time increases, so drivers will strive to minimize their individual travel times.
 
 Step 4 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
 
@@ -225,40 +226,53 @@ Step 4 tests whether the node reached in step 2 is the driver's final destinatio
 \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
 \end{equation}
 
-\subsection{Reward function}
-\label{sec:reward}
+% \subsection{Reward function}
+% \label{sec:reward}
 
-The reward function was designed with the goal of fostering driver to assume different behaviors. By traversing a road, a driver receive a reward $\reward{}$, defined in equation \eqref{eq:rByCombination}, where $\reward{t}$ is the reward component regarding the travel time, $\reward{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
+% By traversing a road, a driver receive a reward $\reward{}$, defined in equation \eqref{eq:rByCombination}%, where $\reward{t}$ is the reward component regarding the travel time, $\reward{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
 
-\begin{equation}
-\label{eq:rByCombination}
-\reward{} = s(\reward{t}) + (1 - s)(\reward{o})
-\end{equation}
+% \begin{equation}
+% \label{eq:rByCombination}
+% \reward{} = s(\reward{t}) + (1 - s)(\reward{o})
+% \end{equation}
 
-Ranging from 0 to 1, $s$ determines if the driver will try to minimize his travel time (higher values of $s$) choose roads with less occupation (lower values of $s$).
+%Ranging from 0 to 1, $s$ determines if the driver will try to minimize his travel time (higher values of $s$) choose roads with less occupation (lower values of $s$).
 
-The component regarding the travel time ($\reward{t}$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
+%The component regarding the travel time ($\reward{t}$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
 
-\begin{equation}
-\label{eq:rByTravelTime}
-R_t = - t_l(v)
-\end{equation}
+% \begin{equation}
+% \label{eq:rByTravelTime}
+% R_t = - t_l(v)
+% \end{equation}
 
 %Where $at_P$ is the actual travel time experienced by the driver (eq. \eqref{eq:att}) and $et_{P^*}$ is the expected travel time for the driver (eq. \eqref{eq:ett}). The purpose of the route weight is to make the driver avoid apparently good links which result in bad options in subsequent decisions.
 
-In this component, the reward decreases as travel time increases. This is to foster drivers to choose routes which will result in smaller travel times. By using this component (higher values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers try to minimize individual travel times, making selfish choices. That is, if a congested link or route leads to the final destination faster than uncongested alternative, they are expected to choose the congested option. 
+% In this component, the reward decreases as travel time increases. This is to foster drivers to choose routes which will result in smaller travel times. By using this component (higher values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers try to minimize individual travel times, making selfish choices. That is, if a congested link or route leads to the final destination faster than uncongested alternative, they are expected to choose the congested option. 
+% 
+% The reward component regarding road occupation ($R_o$) is given by equation \eqref{eq:rByRoadOcc}, where $c_l$ is the capacity of link $l$ and $v$ is the number of vehicles on this link.
+% 
+% \begin{equation}
+% \label{eq:rByRoadOcc}
+% R_o = \left(\frac{c_l}{v}\right) - 1
+% \end{equation}
+% 
+% This reward component will become positive if drivers choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices in order to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
 
-The reward component regarding road occupation ($R_o$) is given by equation \eqref{eq:rByRoadOcc}, where $c_l$ is the capacity of link $l$ and $v$ is the number of vehicles on this link.
+\subsection{Performance evaluation}
+
+\subsubsection{Reasonable travel times}
+It was said that actual travel times experienced by the drivers can be considered reasonable when they are within the expected travel time.
+
+In a real world situation, drivers has an expectation on the travel time needed to reach their destinations based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in the same OD pair plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
 
 \begin{equation}
-\label{eq:rByRoadOcc}
-R_o = \left(\frac{c_l}{v}\right) - 1
+\label{eq:ett}
+\ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-This reward component will become positive if drivers choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices in order to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
-
-\subsection{Evaluation Metrics}
-In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, the following metrics will be used: %TODO resume from here
+%TODO resume from here (add subsubsection about measures?)
+\subsubsection{Proportional distribution}
+In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, the following metrics will be used: 
 
 \begin{itemize}
 	\item Experiment average travel time (xATT): is the average of the mean travel time for all drivers along all the episodes. For this metric, lower values means better performance.
