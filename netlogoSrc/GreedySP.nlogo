@@ -555,48 +555,6 @@ to-report calculate-opt-route [org dest]
   report opt-route
 end
 
-;return a list of options for taking the optimal route between orig and dest in this step
-to-report opt-route-options? [orig dest step]
-  let rid-list []
-
-  ;opt routes between 1-8: 2-8-15 / 1-6-15 / 2-9-17 / 3-11-17 / 3-10-15  
-  if org = 1 and dest = 8 [ 
-    if step = 1 [set rid-list [1 2 3]]
-    if step = 2 [set rid-list [6 8 9 10 11]]
-    if step = 3 [set rid-list [15 17]]
-  ]
-  
-  ;opt routes between 1-9: 2-9-18 / 3-11-18 / 3-12-20
-  if org = 1 and dest = 9 [
-    if step = 1 [set rid-list [2 3]]
-    if step = 2 [set rid-list [9 11 12]]
-    if step = 3 [set rid-list [18 20]]
-  ]
-  
-  ;opt routes between 1-10: 3-12-21
-  if org = 1 and dest = 10 [ 
-    if step = 1 [set rid-list [3]]
-    if step = 2 [set rid-list [12]]
-    if step = 3 [set rid-list [21]]
-  ]
-  
-  ;opt routes between 2-8: 6-15
-  if org = 2 and dest = 8 [
-    if step = 1 [set rid-list [6]]
-    if step = 2 [set rid-list [15]]    
-  ]
-  
-  ;opt routes between 2-9: 
-  if org = 2 and dest = 9 [ set rid-list [6 13 18] ]
-  if org = 2 and dest = 10 [ set rid-list [6 15 23] ]
-
-  if org = 3 and dest = 8 [ set rid-list [9 17] ]
-  if org = 3 and dest = 9 [ set rid-list [9 18] ]
-  if org = 3 and dest = 10 [ set rid-list [9 18 24] ]
-
-  report rid-list
-end
-
 ; Prediz a ocupacao na via dado uma estrategia (o preditor) e o historico.
 ; A previsao e' dada pela formula:
 ; p(t) = x(t - 1) * a(t - 1) + x(t - 2) * a(t -2) +..
