@@ -555,6 +555,79 @@ to-report calculate-opt-route [org dest]
   report opt-route
 end
 
+;return a list of options for taking the optimal route between orig and dest in this step
+to-report opt-route-options [org dest ep-step]
+  let rid-list []
+  
+  
+; ROTAS MINIMAS:
+; 1-8: 2-8-15 / 2-9-17 / 3-12-19 / 3-11-17 / 3-10-15
+; 1-9: 3-12-20 / 3-11-18 / 2-9-18 / 
+; 1-10: 3-12-21
+; 2-8: 6-15
+; 2-9: 5-12-20 / 5-11-18 / 6-13-18 / 6-14-20
+; 2-10: 5-12-21 / 6-14-21
+; 3-8: 8-15 / 9-17
+; 3-9: 9-18
+; 3-10: 9-17-23 / 9-18-24 / 7-12-21 / 8-15-23
+
+
+  ;opt routes between 1-8: 2-8-15 / 1-6-15 / 2-9-17 / 3-11-17 / 3-10-15 / 3-12-19
+  if org = 1 and dest = 8 [ 
+    if ep-step = 1 [set rid-list [1 2 3]]
+    if ep-step = 2 [set rid-list [6 8 9 10 11 12]]
+    if ep-step = 3 [set rid-list [15 17 19]]
+  ]
+  
+  ;opt routes between 1-9: 2-9-18 / 3-11-18 / 3-12-20
+  if org = 1 and dest = 9 [
+    if ep-step = 1 [set rid-list [2 3]]
+    if ep-step = 2 [set rid-list [9 11 12]]
+    if ep-step = 3 [set rid-list [18 20]]
+  ]
+  
+  ;opt routes between 1-10: 3-12-21
+  if org = 1 and dest = 10 [ 
+    if ep-step = 1 [set rid-list [3]]
+    if ep-step = 2 [set rid-list [12]]
+    if ep-step = 3 [set rid-list [21]]
+  ]
+  
+  ;opt routes between 2-8: 6-15
+  if org = 2 and dest = 8 [
+    if ep-step = 1 [set rid-list [6]]
+    if ep-step = 2 [set rid-list [15]]    
+  ]
+  
+  ;opt routes between 2-9: 4-9-18 / 5-12-20 / 5-11-18 / 6-13-18 / 6-14-20 / 6-15-22
+  if org = 2 and dest = 9 [
+    if ep-step = 1 [set rid-list [4 5 6]]
+    if ep-step = 2 [set rid-list [9 11 12 13 14 15]]
+    if ep-step = 3 [set rid-list [18 20 22]]
+  ]
+  
+  ;opt routes between 3-8: 8-15 / 9-17
+  if org = 3 and dest = 8 [
+    if ep-step = 1 [set rid-list [8 9]]
+    if ep-step = 2 [set rid-list [15 17]]
+  ]
+  
+  ;opt routes between 3-9: 9-18
+  if org = 3 and dest = 9 [
+    if ep-step = 1 [set rid-list [9]]
+    if ep-step = 2 [set rid-list [18]]
+  ]
+  
+  ;opt routes between 3-10: 7-12-21 / 8-15-23 / 8-14-21 / 9-17-23 / 9-18-24 / 9-16-21 / 
+  if org = 3 and dest = 10 [
+    if ep-step = 1 [set rid-list [7 8 9]]
+    if ep-step = 2 [set rid-list [12 14 15 16 17 18]]
+    if ep-step = 3 [set rid-list [21 23 24]]
+  ]
+  
+  report rid-list
+end
+
 ; Prediz a ocupacao na via dado uma estrategia (o preditor) e o historico.
 ; A previsao e' dada pela formula:
 ; p(t) = x(t - 1) * a(t - 1) + x(t - 2) * a(t -2) +..
