@@ -314,7 +314,8 @@ to choose-road-randomly
 end
 
 
-;by this method, driver chooses the road with more capacity within one of his shortest paths
+;by this method, driver chooses one of the road within his possible shortest paths
+;the road is chosen probabilistically: the higher the capacity, the higher the probability
 to choose-road-greedily
 
     let chosen-link nobody
@@ -322,21 +323,37 @@ to choose-road-greedily
     let mydest destination
     let node-id current-node
     let currstep length current-route + 1
+    let out-links nobody
     
-    ;obtains outbound link of current intersection with maximum capacity    
-    ask intersections with [id = node-id] [
-      let max-cap 0
-      ask my-out-links [
-        if capacity > max-cap and road-in-opt-route? self myorig mydest currstep[
-          set max-cap capacity
-          set chosen-link self
-          ;show chosen-link
+    ;obtains the outbound links for the
+;    ask intersections with [id = node-id] [
+;      set out-links my-out-links
+;    ]
+    
+    ;obtains the possible links for this driver to follow
+    let possible-links opt-route-options origin destination currstep
+          
+    let total-capacity 0;
+    foreach possible-links [
+      set total-capacity total-capacity + ?
+    ]
+    
+    ;obtains the list of probabilities of each link being chosen
+    let probabilities map [? / total-capacity] possible-links
+    
+    ;chooses a link according to it's probability
+    while [chosen-link = nobody] [ ;repeats in case no link got chosen
+      foreach probabilities [
+        if random-float 1 < ? [
+          ;gets the link corresponding to the 'selected' probability 
+          set current-road one-of roads with [road-id = (item (position ? probabilities) possible-links)]
+          ask current-road [set num-drv num-drv + 1]
+          stop
         ]
       ]
     ]
+       
     
-    set current-road chosen-link
-    ask current-road [set num-drv num-drv + 1]
 end
 
 ;diz se a via pertence ou nao 'a uma rota entre orig e dest
@@ -1101,7 +1118,7 @@ num-drivers
 num-drivers
 1
 2002
-1001
+1
 1
 1
 NIL
@@ -1273,7 +1290,7 @@ SWITCH
 73
 inst-road-view?
 inst-road-view?
-1
+0
 1
 -1000
 
@@ -1794,10 +1811,10 @@ num-episodes
 Number
 
 INPUTBOX
-206
-158
-264
-218
+204
+177
+262
+237
 decay
 1
 1
