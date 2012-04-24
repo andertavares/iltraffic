@@ -28,17 +28,6 @@
 ;TODO mostrar media de 'n' ultimos episodios?
 ;TODO testar greedy e greedy-shortest-path
 
-; ROTAS MINIMAS:
-; 1-8: 2-8-15 / 2-9-17 / 3-12-19 / 3-11-17 / 3-10-15
-; 1-9: 3-12-20 / 3-11-18 / 2-9-18 / 
-; 1-10: 3-12-21
-; 2-8: 6-15
-; 2-9: 5-12-20 / 5-11-18 / 6-13-18 / 6-14-20
-; 2-10: 5-12-21 / 6-14-21
-; 3-8: 8-15 / 9-17
-; 3-9: 9-18
-; 3-10: 9-17-23 / 9-18-24 / 7-12-21 / 8-15-23
-
 globals [
   num-intersections 
   num-roads 
@@ -327,19 +316,18 @@ end
 
 ;by this method, driver chooses the road with more capacity within one of his shortest paths
 to choose-road-greedily
-  
-  ;ask drivers [
 
     let chosen-link nobody
     let myorig origin
     let mydest destination
     let node-id current-node
+    let currstep length current-route + 1
     
     ;obtains outbound link of current intersection with maximum capacity    
     ask intersections with [id = node-id] [
       let max-cap 0
       ask my-out-links [
-        if capacity > max-cap and road-in-route self myorig mydest [
+        if capacity > max-cap and road-in-opt-route? self myorig mydest currstep[
           set max-cap capacity
           set chosen-link self
           ;show chosen-link
@@ -349,7 +337,6 @@ to choose-road-greedily
     
     set current-road chosen-link
     ask current-road [set num-drv num-drv + 1]
-  ;]
 end
 
 ;diz se a via pertence ou nao 'a uma rota entre orig e dest
@@ -370,6 +357,16 @@ to-report road-in-route [the-road orig dest]
     set inroute? in-route orig dest
   ]
   report inroute?
+end
+
+;reports whether the link identified by the-road belongs to an optimal route between orig and dest on that episode step
+to-report road-in-opt-route? [the-road orig dest ep-step]
+  let in-opt-route? false
+  ask the-road [
+    
+    if member? road-id opt-route-options orig dest ep-step [set in-opt-route? true]
+  ]
+  report in-opt-route?
 end
 
 ;faz o motorista chegar ao destino da via escolhida e experimentar o tempo de viagem
@@ -604,6 +601,13 @@ to-report opt-route-options [org dest ep-step]
     if ep-step = 1 [set rid-list [4 5 6]]
     if ep-step = 2 [set rid-list [9 11 12 13 14 15]]
     if ep-step = 3 [set rid-list [18 20 22]]
+  ]
+  
+  ;opt routes between 2-10: 5-12-21 / 6-14-21 / 6-15-23
+  if org = 2 and dest = 10 [
+    if ep-step = 1 [set rid-list [5 6]]
+    if ep-step = 2 [set rid-list [12 14 15]]
+    if ep-step = 3 [set rid-list [21 23]]
   ]
   
   ;opt routes between 3-8: 8-15 / 9-17
@@ -1269,7 +1273,7 @@ SWITCH
 73
 inst-road-view?
 inst-road-view?
-1
+0
 1
 -1000
 
