@@ -99,6 +99,14 @@ to setup
     ask intersections [ set label id ]
 end
 
+to setup-std-scenario
+  setup
+  let inputfile "inputs/MGTA_compare.txt"
+  
+  load-setup-from-file inputfile
+end
+
+
 to go
   reset-road-network
   
@@ -924,12 +932,17 @@ to load-setup
   
   let inputfile user-file
   if inputfile = false [stop]
+  load-setup-from-file inputfile
+  
+end
+
+to load-setup-from-file [thefile]
   
   reset-experiment
   clear-all-plots
   
   
-  file-open inputfile
+  file-open thefile
   
   ;let foo "nothing-important"
 
@@ -1122,7 +1135,7 @@ q-learning-alpha
 q-learning-alpha
 0
 1
-0.01000000416606889
+0.5
 .1
 1
 NIL
@@ -1314,7 +1327,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-0.8
+0.5
 .1
 1
 NIL
@@ -2160,6 +2173,377 @@ NetLogo 4.1.3
     </enumeratedValueSet>
     <enumeratedValueSet variable="two-nine">
       <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="alpha-varying" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup-std-scenario</setup>
+    <go>go</go>
+    <final>setup-std-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <metric>mean [average-tt] of drivers with [origin = 1 and destination = 8]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 1 and destination = 9]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 1 and destination = 10]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 2 and destination = 8]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 2 and destination = 9]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 2 and destination = 10]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 3 and destination = 8]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 3 and destination = 9]</metric>
+    <metric>mean [average-tt] of drivers with [origin = 3 and destination = 10]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 1]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 2]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 3]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 4]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 5]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 6]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 7]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 8]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 9]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 10]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 11]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 12]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 13]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 14]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 15]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 16]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 17]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 18]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 19]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 20]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 21]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 22]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 23]</metric>
+    <metric>item 0  [avg-num-drv] of roads with [road-id = 24]</metric>
+    <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-alpha" first="0.1" step="0.1" last="1"/>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="route-weight-power">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="alpha-varying-light" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup-std-scenario</setup>
+    <go>go</go>
+    <final>setup-std-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-alpha" first="0.1" step="0.1" last="1"/>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="route-weight-power">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="alpha-varying-light-10times" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup-std-scenario</setup>
+    <go>go</go>
+    <final>setup-std-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-alpha" first="0.1" step="0.1" last="1"/>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="route-weight-power">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="gamma-varying-light-10times" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup-std-scenario</setup>
+    <go>go</go>
+    <final>setup-std-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-gamma" first="0.1" step="0.1" last="1"/>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-alpha">
+      <value value="0.1"/>
+      <value value="0.1"/>
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="route-weight-power">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
