@@ -101,7 +101,7 @@ end
 
 to setup-std-scenario
   setup
-  let inputfile "inputs/MGTA_compare.txt"
+  let inputfile "inputs/MGTA_compare2.txt"
   
   load-setup-from-file inputfile
 end
@@ -950,13 +950,13 @@ to load-setup-from-file [thefile]
   set num-drivers file-read
   
  ; set foo file-read ;"q-learning-alpha"
-  set q-learning-alpha file-read
+ ; set q-learning-alpha file-read
   
   ;set foo file-read ;"q-learning-gamma"
-  set q-learning-gamma file-read
+;  set q-learning-gamma file-read
   
   ;set foo file-read ;"epsilon"
-  set epsilon file-read
+;  set epsilon file-read
   
  ; set foo file-read ;"travel-time-alpha"
   set travel-time-alpha file-read
@@ -984,7 +984,7 @@ to load-setup-from-file [thefile]
       setup-driver the-origin the-destination
     ]
   ]
-  
+  show count drivers with [origin = 1 and destination = 8]
   calculate-ett
   
   
@@ -1327,7 +1327,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-0.5
+1
 .1
 1
 NIL
@@ -1342,7 +1342,7 @@ epsilon
 epsilon
 0
 1
-0.1
+0.01000000416606889
 .1
 1
 NIL
