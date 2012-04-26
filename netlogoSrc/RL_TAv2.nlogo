@@ -461,8 +461,8 @@ end
 
 ;sets up variables for the next episode
 to prepare-next-episode
-  set q-learning-alpha q-learning-alpha * decay
-;  set epsilon epsilon * decay
+  ;set q-learning-alpha q-learning-alpha * decay
+  set epsilon epsilon * decay
 end
 
 to-report avg-dev-episode
@@ -2490,9 +2490,7 @@ NetLogo 4.1.3
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="q-learning-alpha">
-      <value value="0.1"/>
-      <value value="0.1"/>
-      <value value="1"/>
+      <value value="0.5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="roads-capacity">
       <value value="130"/>
