@@ -1327,7 +1327,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-1
+0.9
 .1
 1
 NIL
@@ -1531,7 +1531,7 @@ cap-randomness
 cap-randomness
 0
 120
-120
+118
 1
 1
 NIL
@@ -2390,7 +2390,7 @@ NetLogo 4.1.3
       <value value="0.95499259"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="q-learning-gamma">
-      <value value="0.5"/>
+      <value value="0.9"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="plot-capacity?">
       <value value="true"/>

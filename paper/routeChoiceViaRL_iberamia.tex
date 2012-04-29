@@ -6,6 +6,7 @@
 \usepackage[latin1]{inputenc}  
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{subfigure}
      
 %\sloppy
 
@@ -28,14 +29,16 @@
 
 \newcommand{\reward}[1][]{\ensuremath{R_#1}}	%reward
 
+\newcommand{\congRoads}{\ensuremath{C}}		%the set of congested roads
+\newcommand{\numCong}{\ensuremath{n}}		%number of congested roads
+\newcommand{\overLoadRatio}{\ensuremath{o}}	%overload ratio
+
 \title{Reinforcement learning for route choice in an abstract traffic scenario}
 
 
 \author{
   Anderson R. Tavares\inst{1} \and Ana L. C. Bazzan\inst{1}
 }
-
-
 
 \institute{Instituto de Inform\'atica -- Universidade Federal do Rio Grande do Sul
   (UFRGS)\\
@@ -142,14 +145,14 @@ The MDP for this problem is modeled as follows: the states are the nodes of the 
 
 The reward decreases as travel time increases, so drivers will strive to minimize their individual travel times.
 
-\subsection{The algorithm}
+\subsection{The algorithm:}
 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
 
-\subsubsection{Initialization}
+\subsubsection{Initialization:}
 At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. 
 
-\subsubsection{Execution}
+\subsubsection{Execution:}
 
 Each episode of this reinforcement learning for route choice algorithm follows the steps shown in Figure \ref{fig:flowchart}.
 
@@ -217,9 +220,9 @@ Step 4 tests whether the node reached in step 2 is the driver's final destinatio
 % 
 % This reward component will become positive if drivers choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices in order to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
 
-\subsection{Performance evaluation}
+\subsection{Evaluation metrics}
 
-\subsubsection{Reasonable travel times}
+\subsubsection{Reasonable travel times:}
 In Section \ref{sec:intro}, it was said that actual travel times experienced by the drivers can be considered reasonable when they are within the expected travel time.
 
 In a real world situation, drivers have an expectation on the travel time needed to reach their destinations based on the route length and the expected number of drivers in it. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his optimal route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range [-50:50]. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
@@ -229,24 +232,22 @@ In a real world situation, drivers have an expectation on the travel time needed
 \ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
+In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times achieved by the drivers of a given OD pair.
 
-\subsubsection{Proportional distribution}
+\subsubsection{Road network load balance:}
 
-From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. %In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
+Road network load balance will be measured in two forms: number of congested roads ($n$) and sum of overload ratio ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively.
 
-The actual distribution of vehicles over the road network will be compared to a hypothetical distribution that is proportional to each road capacity........%TODO resume from here
+\begin{equation}
+\label{eq:balanceMetrics}
+\numCong = |\congRoads| \hspace{1.5cm}  \overLoadRatio = \sum_{l \in \congRoads} \frac{\veh_l}{\linkCap}
+\end{equation}
 
-In order to assess the Q-learning based route choice algorithm in terms of drivers' travel time and distribution of vehicles over the road network, the following metrics will be used: 
-
-\begin{itemize}
-	\item Experiment average travel time (xATT): is the average of the mean travel time for all drivers along all the episodes. For this metric, lower values means better performance.
-	\item Actual and expected travel time difference (AEDIFF): This metric is calculated for each OD pair. In one episode, it is given by the difference between the average of actual travel time and the average of expected travel time for all drivers on the same OD pair. For the experiment, the values obtained are averaged over the number of episodes. It is desirable that this metric reaches negative values, which means that actual travel times are lower than driver's expectations.
-	\item Actual and hypothetical distribution difference (AHDIFF): this metric is relative to the roads. For one road, it is given as the absolute value of the difference between the actual and the proportional number of vehicles in it (reached by the hypothetical distribution mentioned in \ref{hypo}. For the road network, it is given as the sum of the values obtained for all roads. The closer this metric gets to zero the better, because this means that the distribution of vehicles on the network is close to the hypothetic proportional distribution.
-\end{itemize}
 
 \subsection{Studied scenario}
 
-For comparison purposes, the abstract road network used in the present work is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. The network links have the same weights, representing no differences on their lengths.
+The abstract road network used in the present work is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. The network links have the same weights, representing no differences on their lengths.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=8.5cm]{img/roadnetwork.png}}
@@ -254,10 +255,42 @@ For comparison purposes, the abstract road network used in the present work is t
     \label{fig:roadnetwork}
 \end{figure}
 
-Each driver has a fixed OD pair through all the experiment.% which simulate a commuting scenario, like in a city with drivers living in different neighborhoods trying to reach their workplaces. Each iteration of the experiment represents this happening in the same time of one day.
+The proposed algorithm will be compared with three different approaches:
+
+\begin{itemize}
+  \item Random: At each step, drivers choose one of the possible outbound links with random probability.
+  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path.
+  \item Minority Game: In this approach, drivers use a modified minority game algorithm to build their routes. For a complete description of the algorithm, it is suggested that readers refer to \cite{Galib&Moser2011}.
+\end{itemize}
 
 \section{Results and discussion}
 \label{sec:results}
+
+In the experiments, the link's capacities were randomly assigned within the range [130:250] prior to the simulations. The values are persisted from one simulation to another to ensure a correct comparison of different algorithms. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For the travel time equation \eqref{eq:tt}, the
+constant $\fftt$ is set as 5 minutes for all links. The parameters  $\tau$ and $\beta$ are set as $1$ and $2$, respectively. This means that, as the number of drivers on a link increases, the travel time increases quadratically. 
+
+\subsection{Influence of Q-learning parameters}
+
+Several simulations were run to assess the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$).
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[]{
+    \includegraphics[width=9cm]{img/travelTimeVsAlpha.png}
+    \label{fig:travelTimeVsAlpha}
+  }
+  \subfigure[]{
+    \includegraphics[width=9cm]{img/travelTimeVsGamma.png}
+    \label{fig:travelTimeVsGamma}
+  }
+  \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time. Each parameter value was tested 10 times.}
+  \label{fig:qLearningParams}
+\end{figure}
+
+Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4 to 0.8, travel time does not change in a significant way. On Fig. \ref{fig:travelTimeVsGamma}, a decrease on travel time is observed with the increase of $\gamma$. These plots shows that a good choice for the parameters is $\alpha = 0.5$ and $\gamma = 0.9$. With these values, lower travel times are achieved.
+
+\subsection{Comparison with other algorithms}
+
 
 
 \subsection{Comparison with evolutionary game theory}
