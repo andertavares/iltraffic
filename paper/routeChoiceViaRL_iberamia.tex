@@ -7,6 +7,8 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{subfigure}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
      
 %\sloppy
 
@@ -125,7 +127,7 @@ Two-route scenarios are studied in \cite{Bazzan+2000icmas, Chmura&Pitz2007, Klue
 
 This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. On their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
-More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few roads get overused. The modified minority game algorithm uses historic usage data of all roads to choose the next one on the route. Having historical information of the roads used by the driver is a reasonable assumption, but having historic information of all roads on the network is unrealistic. The algorithm proposed on the present work will be compared with the modified minority game. 
+More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The modified minority game algorithm uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The algorithm proposed on the present work will be compared with the modified minority game. 
 
 \section{Algorithm and scenario}
 \label{sec:proposal}
@@ -147,14 +149,45 @@ The reward decreases as travel time increases, so drivers will strive to minimiz
 
 \subsection{The algorithm:}
 
-The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}. 
+The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
+
+\begin{algorithm}
+\caption{RL for route choice algorithm}
+\label{alg:RLforRouteChoice}
+\begin{algorithmic}
+
+\item \{* Initialization *\}
+\State $\epsilon \gets 1$
+\State $ODpair \gets random\_OD\_pair$
+\State $CurrentNode \gets Origin$
+\State $P \gets \phi$ \Comment{$P$ is the driver's route}
+\State $P^* \gets shortestPath(ODPair)$ \Comment{$P^*$ is the driver's shortest route}
+\item \{* Execution *\}
+
+\While{$CurrentNode \neq Destination$}
+  \If{$random() \leq \epsilon$}
+      \State $CurrentLink \gets RandomOutboundLink$
+  \Else
+      \State $CurrentLink \gets LinkWithMaxQ$
+  \EndIf
+  \State $P \gets P \cup \{CurrentLink\}$
+  \State $CurrentNode \gets destinationOf(CurrentLink)$
+\EndWhile
+
+\item Calculate travel time for route $P$
+
+\For{$l \in P$}
+  \item Update Q table for $l$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Initialization:}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. 
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Drivers also initialise the exploration coefficient ($\epsilon$) at 1. This means that drivers will explore in the beginning to gain knowledge about the road network.
 
 \subsubsection{Execution:}
 
-Each episode of this reinforcement learning for route choice algorithm follows the steps shown in Figure \ref{fig:flowchart}.
+In each episode of this reinforcement learning for route choice algorithm, each driver follows the steps shown in Figure \ref{fig:flowchart}.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=7cm]{img/flowchart2.png}}
@@ -163,16 +196,11 @@ Each episode of this reinforcement learning for route choice algorithm follows t
 \end{figure}
 %TODO discuss hypothetic distribution on the text
 
-At step 1 drivers choose an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, drivers reach the destination of the chosen link and experience their travel times given by Eq. \eqref{eq:tt}.
+At step 1 the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, the destination node of the chosen link is reached. Step 3 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 and 2 are repeated. At step 4, drivers update their Q-tables on the entries regarding the links they traversed.
 
-% given by Eq. \eqref{eq:att}, where $\att{i}$ is the travel time experienced by driver $i$ and $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) with $\veh$ being the number of drivers on link $l$.
-%TODO realocate actual travel-time equation
-% \begin{equation}
-% \label{eq:att}
-% \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
-% \end{equation}
+and experience their travel times given by Eq. \eqref{eq:tt}.
 
-Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning factor, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$.
+Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning rate, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. 
 
 \begin{equation}
 \label{eq:qlearning}
@@ -181,44 +209,12 @@ Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
 
 %TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
 
-Step 4 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
+ When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
 
 \begin{equation}
 \label{eq:att}
 \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
 \end{equation}
-
-% \subsection{Reward function}
-% \label{sec:reward}
-
-% By traversing a road, a driver receive a reward $\reward{}$, defined in equation \eqref{eq:rByCombination}%, where $\reward{t}$ is the reward component regarding the travel time, $\reward{o}$ is the reward component regarding road occupation and `$s$' is a coefficient to balance the weight of each reward component.
-
-% \begin{equation}
-% \label{eq:rByCombination}
-% \reward{} = s(\reward{t}) + (1 - s)(\reward{o})
-% \end{equation}
-
-%Ranging from 0 to 1, $s$ determines if the driver will try to minimize his travel time (higher values of $s$) choose roads with less occupation (lower values of $s$).
-
-%The component regarding the travel time ($\reward{t}$) is given by equation \eqref{eq:rByTravelTime}, where $t_l(v)$ is the travel time function given by equation \eqref{eq:tt} with $v$ being the number of drivers on link $l$.
-
-% \begin{equation}
-% \label{eq:rByTravelTime}
-% R_t = - t_l(v)
-% \end{equation}
-
-%Where $at_P$ is the actual travel time experienced by the driver (eq. \eqref{eq:att}) and $et_{P^*}$ is the expected travel time for the driver (eq. \eqref{eq:ett}). The purpose of the route weight is to make the driver avoid apparently good links which result in bad options in subsequent decisions.
-
-% In this component, the reward decreases as travel time increases. This is to foster drivers to choose routes which will result in smaller travel times. By using this component (higher values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers try to minimize individual travel times, making selfish choices. That is, if a congested link or route leads to the final destination faster than uncongested alternative, they are expected to choose the congested option. 
-% 
-% The reward component regarding road occupation ($R_o$) is given by equation \eqref{eq:rByRoadOcc}, where $c_l$ is the capacity of link $l$ and $v$ is the number of vehicles on this link.
-% 
-% \begin{equation}
-% \label{eq:rByRoadOcc}
-% R_o = \left(\frac{c_l}{v}\right) - 1
-% \end{equation}
-% 
-% This reward component will become positive if drivers choose an uncongested link ($c_a > x_a$) and will become negative if the number of vehicles on the link becomes higher than it's capacity. By using this component (smaller values of $s$ on \eqref{eq:rByCombination}), it is expected that drivers make choices in order to avoid congestion and alleviate the traffic flow on the network, even if it result in higher individual travel times.
 
 \subsection{Evaluation metrics}
 
@@ -236,15 +232,14 @@ In order to assess how reasonable are the travel time obtained by drivers using 
 
 \subsubsection{Road network load balance:}
 
-From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. %In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
-Road network load balance will be measured in two forms: number of congested roads ($n$) and overload factor ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link on the network. Road network load balance will be measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, $n$ these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
-\numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \sum_{l \in \congRoads} \left(\frac{\veh_l}{\linkCap} -1 \right)
+\numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{l \in \congRoads} \left(\frac{\veh_l}{\linkCap} -1 \right)}{|C|}
 \end{equation}
 
-The two metrics are needed because the number of congested roads does not measures how heavy are the roads congestions and the overload factor does not shows whether there are multiple roads slightly overloaded or just few heavily overloaded. For both ($n$) and ($o$), smaller values means better performance, as less roads are congested and the severity of congestions is lower.
+The two metrics are needed because $n$ does not measures how heavy are the links congestions and $o$ does not shows how many links are overloaded. For both ($n$) and ($o$), smaller values means better performance, as less links are congested and the severity of congestions is lower.
 
 \subsection{Studied scenario}
 
@@ -260,7 +255,7 @@ The proposed algorithm will be compared with three different approaches:
 
 \begin{itemize}
   \item Random: At each step, drivers choose one of the possible outbound links with random probability.
-  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path.
+  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path. %TODO mention selfish here
   \item Minority Game: In this approach, drivers use a modified minority game algorithm to build their routes. For a complete description of the algorithm, it is suggested that readers refer to \cite{Galib&Moser2011}.
 \end{itemize}
 
@@ -313,18 +308,18 @@ In this metric, the RL approach outperforms the others, achieving reasonable tra
     \includegraphics[width=5.8cm]{img/averageOverload.png}
     \label{fig:averageOverload}
   }
-  \caption{Load balance evaluation in terms of number of congested roads \subref{fig:numCongestedRoads} and the average overload \subref{fig:averageOverload}.}
+  \caption{Load balance evaluation in terms of number of congested links \subref{fig:numCongestedRoads} and the average overload \subref{fig:averageOverload}.}
   \label{fig:loadBalance}
 \end{figure}
 
-On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested roads and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the roads capacity. The RL based algorithm achieves good results as the average overload shows that none of the seven congested roads (out of 24 roads) were heavily congested. Both the random and the greedy approach performed poorly, as many roads were congested in the random approach and roads were heavily congested in the greedy approach.
+On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The RL based algorithm achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-In this work we presented a new algorithm for route choice in an abstract traffic scenario using reinforcement learning. Our approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as roads does not get heavily congested.
+In this work we presented a new algorithm for route choice in an abstract traffic scenario using reinforcement learning. Our approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as links does not get heavily congested.
 
-The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of roads. This makes our algorithm an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
+The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of links. This makes our algorithm an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
 
 This work is a successful application of the independent learners concept on a complex, competitive scenario. Agents learned how to choose routes to their destinations even considering other agents as part of the environment.
 
