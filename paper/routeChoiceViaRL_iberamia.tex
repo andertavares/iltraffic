@@ -31,7 +31,7 @@
 
 \newcommand{\congRoads}{\ensuremath{C}}		%the set of congested roads
 \newcommand{\numCong}{\ensuremath{n}}		%number of congested roads
-\newcommand{\overLoadRatio}{\ensuremath{o}}	%overload ratio
+\newcommand{\overLoadFactor}{\ensuremath{o}}	%overload factor - measures severity of congestions
 
 \title{Reinforcement learning for route choice in an abstract traffic scenario}
 
@@ -237,14 +237,14 @@ In order to assess how reasonable are the travel time obtained by drivers using 
 \subsubsection{Road network load balance:}
 
 From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. %In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
-Road network load balance will be measured in two forms: number of congested roads ($n$) and sum of overload ratio ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
+Road network load balance will be measured in two forms: number of congested roads ($n$) and overload factor ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
-\numCong = |\congRoads| \hspace{1.5cm}  \overLoadRatio = \sum_{l \in \congRoads} \frac{\veh_l}{\linkCap}
+\numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \sum_{l \in \congRoads} \left(\frac{\veh_l}{\linkCap} -1 \right)
 \end{equation}
 
-For both ($n$) and ($o$), smaller values means better performance, as less roads are congested and the severity of congestions is lower.
+The two metrics are needed because the number of congested roads does not measures how heavy are the roads congestions and the overload factor does not shows whether there are multiple roads slightly overloaded or just few heavily overloaded. For both ($n$) and ($o$), smaller values means better performance, as less roads are congested and the severity of congestions is lower.
 
 \subsection{Studied scenario}
 
@@ -288,29 +288,29 @@ Several simulations were run to assess the effect of Q-learning parameters, name
   \label{fig:qLearningParams}
 \end{figure}
 
-Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4 to 0.8, travel time does not change in a significant way. On Fig. \ref{fig:travelTimeVsGamma}, a decrease on travel time is observed with the increase of $\gamma$. These plots shows that a good choice for the parameters is $\alpha = 0.5$ and $\gamma = 0.9$. With these values, lower travel times are achieved.
+Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4 to 0.8, travel time does not change in a significant way. On Fig. \ref{fig:travelTimeVsGamma}, a decrease on travel time is observed with the increase of $\gamma$. These plots shows that a good choice for the parameters are $\alpha = 0.5$ and $\gamma = 0.9$, as lower travel times are achieved with these values. They will be used for the experiments that follows.
 
 \subsection{Comparison with other algorithms}
 
-%TODO prepare NETLOGO experiments, capture the METRICS
-
-\subsection{Comparison with evolutionary game theory}
-
-The objective of the following experiment is to compare the reinforcement learning for route choice algorithm with the one based on the Minority Game, proposed in \cite{Galib&Moser2011}. Comparison will be made in terms of travel times per OD pair and distribution of drivers along the roads. 
+For each algorithm, the AED (actual and expected travel time difference) is shown on Figure \ref{fig:travelTimeComparison}. 
 
 \begin{figure}[ht]
-    \centerline{\includegraphics[width=7cm]{img/rl_vs_mg_traveltime.png}}
-    \caption{Comparison of algorithms regarding travel time}
+    \centerline{\includegraphics[width=8.5cm]{img/travelTimeComparison.png}}
+    \caption{AED metric comparison for each algorithm. RL and MG are the reinforcement learning and minority game approaches, respectively}
     \label{fig:travelTimeComparison}
-%\end{figure}
-\vspace*{3ex} \centering
-%\begin{figure}[ht]
-    \centerline{\includegraphics[width=7cm]{img/roadsUsage_comparison.png}}
-    \caption{Comparison of algorithms regarding road usage}
-    \label{fig:roadsUsageComparison}
 \end{figure}
 
-Figure \ref{fig:travelTimeComparison} shows the travel time obtained by both algorithms. Figure \ref{fig:roadsUsageComparison} compares both algorithms regarding roads usage. The values shown are the average over 50 iterations. The algorithms have similar performances, although drivers using the minority game based algorithm achieve lower travel times. The highest travel time difference is 3.41 minutes for OD pair 3-10.
+In this metric, the RL approach outperforms the others, achieving reasonable travel times in all OD Pairs. The minority game algorithm achieves travel times within expectation in 4 OD pairs. On the other OD pairs, the performance is still good, as actual travel times are no longer than 5 minutes beyond the expected, showing a degree of fairness of the algorithm. With the greedy approach, drivers from 5 OD pairs experience travel times within expectation, but especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
+
+
+On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested roads and the overload factor (which is based on the sum of congested roads occupation) were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the roads capacity. The RL based algorithm achieves good results. %The overload factor in this case shows that no road got
+
+\begin{figure}[ht]
+    \centerline{\includegraphics[width=8.5cm]{img/loadBalance.png}}
+    \caption{Load balance evaluation in terms of number of congested roads and the overload factor}
+    \label{fig:loadBalance}
+\end{figure}
+
 
 
 
