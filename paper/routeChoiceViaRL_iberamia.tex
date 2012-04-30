@@ -33,7 +33,7 @@
 \newcommand{\numCong}{\ensuremath{n}}		%number of congested roads
 \newcommand{\overLoadFactor}{\ensuremath{o}}	%overload factor - measures severity of congestions
 
-\title{Reinforcement learning for route choice in an abstract traffic scenario}
+\title{Independent learners in an abstract traffic scenario}
 
 
 \author{
@@ -51,7 +51,7 @@
 \maketitle
 
 \begin{abstract}
-Traffic movement in a commuting scenario is a phenomena that emerges from individual and uncoordinated route choice by drivers. Every driver wishes to achieve reasonable travel times from his origin to his destination and, from a global point of view, it is desirable that the load gets distributed proportionally to the roads capacity on the network. This work presents a reinforcement learning algorithm for route choice which relies solely on drivers experience to guide their decisions. Experimental results demonstrate that reasonable travel times can be achieved and vehicles distribute themselves over the road network avoiding congestion. The proposed algorithm makes use of no coordinated learning mechanism, making this work is a case of use of independent learners concept.
+Traffic movement in a commuting scenario is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice by drivers.This work presents a reinforcement learning algorithm for route choice which relies solely on drivers experience to guide their decisions. There is no coordinated learning mechanism, so that driver agents are independent learners. Our algorithm is compared to other approaches and experimental results shows good performance regarding travel times and road network load balance. The simplicity, realistic assumptions and performance of the proposed algorithm makes it feasible of being implemented on navigation systems.
 \end{abstract}
 
 
@@ -66,7 +66,7 @@ Traffic movement in a commuting scenario is a phenomena that emerges from indivi
 
 The subject of traffic and mobility presents challenging issues to authorities, traffic engineers and researchers. To deal with the increasing demand, techniques and methods to optimize the existing road traffic network are attractive since they do not include expensive and environmental-impacting changes on infrastructure.
 
-In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles gets distributed on the road network proportionally to the capacity of each road. Multiagent systems like this commuting scenario, where each agent tries to maximize its own utility function, while at the same time there is an global utility which rates the whole system's behavior are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown on \cite{Tumer&Wolpert2004}.
+In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles gets distributed on the road network proportionally to the capacity of each road. Multiagent systems like this commuting scenario, where each agent tries to maximize its own utility function, while at the same time there is an global utility which rates the whole system's behavior are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown by \cite{Tumer&Wolpert2004}.
 
 Traffic assignment deals with route choice between origin-destination pairs in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem. This approach uses no communication among drivers and makes no unrealistic assumptions such as the drivers having complete knowledge on real-time road traffic condition. In reinforcement learning problems, agents make decisions using only their own experience which is gained through interaction with the environment.
 
@@ -78,7 +78,7 @@ The remainder of this document is organized as follows: Section \ref{sec:concept
 \label{sec:concepts}
 \subsection{Commuting and traffic flow}
 
-A road network can be modeled as a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or distance.
+A road network can be modeled as a graph, where there is a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or distance.
 
 A subset of the nodes contains the origins of the road network, where drivers start their trips, and another subset represents the destinations, where drivers finish their trips. In a commuting scenario, a driver's trip consists on a set of links, forming a route between his origin and destination (OD pair) among the available routes.
 
@@ -303,27 +303,32 @@ For each algorithm, the AED (actual and expected travel time difference) is show
 In this metric, the RL approach outperforms the others, achieving reasonable travel times in all OD Pairs. The minority game algorithm achieves travel times within expectation in 4 OD pairs. On the other OD pairs, the performance is still good, as actual travel times are no longer than 5 minutes beyond the expected, showing a degree of fairness of the algorithm. With the greedy approach, drivers from 5 OD pairs experience travel times within expectation, but especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
 
-On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested roads and the overload factor (which is based on the sum of congested roads occupation) were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the roads capacity. The RL based algorithm achieves good results. %The overload factor in this case shows that no road got
-
 \begin{figure}[ht]
-    \centerline{\includegraphics[width=8.5cm]{img/loadBalance.png}}
-    \caption{Load balance evaluation in terms of number of congested roads and the overload factor}
-    \label{fig:loadBalance}
+  \centering
+  \subfigure[]{
+    \includegraphics[width=5.8cm]{img/numCongestedRoads.png}
+    \label{fig:numCongestedRoads}
+  }
+  \subfigure[]{
+    \includegraphics[width=5.8cm]{img/averageOverload.png}
+    \label{fig:averageOverload}
+  }
+  \caption{Load balance evaluation in terms of number of congested roads \subref{fig:numCongestedRoads} and the average overload \subref{fig:averageOverload}.}
+  \label{fig:loadBalance}
 \end{figure}
 
-
-
+On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested roads and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the roads capacity. The RL based algorithm achieves good results as the average overload shows that none of the seven congested roads (out of 24 roads) were heavily congested. Both the random and the greedy approach performed poorly, as many roads were congested in the random approach and roads were heavily congested in the greedy approach.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-In this work we presented a new algorithm for route choice in an abstract traffic scenario using reinforcement learning. Our approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times, on average, and only few roads are overused.
+In this work we presented a new algorithm for route choice in an abstract traffic scenario using reinforcement learning. Our approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as roads does not get heavily congested.
 
-Nevertheless, the proposed approach is based on realistic assumptions as it only relies on drivers own experience about the road network, dismissing the use of real-time information and historic data of roads. This makes our algorithm an attractive alternative to be used on existing navigation systems, as no new technologies are required.
+The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of roads. This makes our algorithm an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
 
-This work is an successful application of the independent learners concept on a complex, competitive scenario. Agents learned how to choose routes to their destinations even considering other agents as part of the environment.
+This work is a successful application of the independent learners concept on a complex, competitive scenario. Agents learned how to choose routes to their destinations even considering other agents as part of the environment.
 
-Further investigation can be conducted to assess how the algorithm performs in heterogeneous scenarios, that is, when there are drivers who use other decision processes or algorithms. Future works can also attempt to assess how good it would be for agents when they consider other agents on the environment, that is, how good it would be to learn joint actions in this competitive environment.
+Further investigation can be conducted to assess how the algorithm performs in heterogeneous scenarios. That is, it would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game algorithm proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
 
 \bibliographystyle{splncs03}
 \bibliography{references,stringDefs,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
