@@ -232,18 +232,19 @@ In a real world situation, drivers have an expectation on the travel time needed
 \ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times achieved by the drivers of a given OD pair.
+In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times achieved by the drivers of a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
 
 \subsubsection{Road network load balance:}
 
 From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each road on the network. %In the present work, vehicle distribution over the network emerges from individual decisions that each driver make using the RL for route choice algorithm. 
-Road network load balance will be measured in two forms: number of congested roads ($n$) and sum of overload ratio ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively.
+Road network load balance will be measured in two forms: number of congested roads ($n$) and sum of overload ratio ($o$). Considering C as the set of congested roads, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
 \numCong = |\congRoads| \hspace{1.5cm}  \overLoadRatio = \sum_{l \in \congRoads} \frac{\veh_l}{\linkCap}
 \end{equation}
 
+For both ($n$) and ($o$), smaller values means better performance, as less roads are congested and the severity of congestions is lower.
 
 \subsection{Studied scenario}
 
@@ -291,7 +292,7 @@ Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4
 
 \subsection{Comparison with other algorithms}
 
-
+%TODO prepare NETLOGO experiments, capture the METRICS
 
 \subsection{Comparison with evolutionary game theory}
 

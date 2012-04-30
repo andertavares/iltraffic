@@ -927,6 +927,33 @@ to update-roads-visual
   ]
 end
 
+
+;reports the num-drv / capacity ratio for a road
+to-report overload-ratio [rid]
+  let ratio 0
+  ask roads with [road-id = rid] [
+    set ratio num-drv / capacity 
+  ]
+  report ratio
+end
+
+;reports the number of congested roads (num-drv > capacity)
+to-report num-congested-roads 
+    report count roads with [num-drv > capacity]
+end
+
+;reports the aed metric, given by the average of the difference between actual and expected travel times on a given OD pair
+to-report aed [orig dest]
+  
+  report mean [actual-tt - expected-tt] of drivers with [origin = orig and destination = dest]
+;  ask drivers with [origin = orig and destination = dest] [
+;    
+;  ]
+end
+
+
+
+
 to setup-roads-thickness 
 
   let min-cap min [capacity] of roads
@@ -997,12 +1024,17 @@ to load-setup
   
   let inputfile user-file
   if inputfile = false [stop]
+  load-setup-from-file inputfile
+  
+end
+
+to load-setup-from-file [thefile]
   
   reset-experiment
   clear-all-plots
   
   
-  file-open inputfile
+  file-open thefile
   
   ;let foo "nothing-important"
 
@@ -1010,13 +1042,13 @@ to load-setup
   set num-drivers file-read
   
  ; set foo file-read ;"q-learning-alpha"
-  set q-learning-alpha file-read
+ ; set q-learning-alpha file-read
   
   ;set foo file-read ;"q-learning-gamma"
-  set q-learning-gamma file-read
+;  set q-learning-gamma file-read
   
   ;set foo file-read ;"epsilon"
-  set epsilon file-read
+;  set epsilon file-read
   
  ; set foo file-read ;"travel-time-alpha"
   set travel-time-alpha file-read
@@ -1044,7 +1076,7 @@ to load-setup
       setup-driver the-origin the-destination
     ]
   ]
-  
+  show count drivers with [origin = 1 and destination = 8]
   calculate-ett
   
   
@@ -1066,6 +1098,12 @@ to load-setup
   setup-roads-thickness
 end
 
+to setup-std-scenario
+  setup
+  let inputfile "inputs/MGTA_compare2.txt"
+  
+  load-setup-from-file inputfile
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 280
@@ -2232,6 +2270,125 @@ NetLogo 4.1.3
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup-std-scenario</setup>
+    <go>go</go>
+    <final>setup-std-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>num-congested-roads</metric>
+    <metric>aed 1 8</metric>
+    <metric>aed 1 9</metric>
+    <metric>aed 1 10</metric>
+    <metric>aed 2 8</metric>
+    <metric>aed 2 9</metric>
+    <metric>aed 2 10</metric>
+    <metric>aed 3 8</metric>
+    <metric>aed 3 9</metric>
+    <metric>aed 3 10</metric>
+    <metric>overload-ratio 1</metric>
+    <metric>overload-ratio 2</metric>
+    <metric>overload-ratio 3</metric>
+    <metric>overload-ratio 4</metric>
+    <metric>overload-ratio 5</metric>
+    <metric>overload-ratio 6</metric>
+    <metric>overload-ratio 7</metric>
+    <metric>overload-ratio 8</metric>
+    <metric>overload-ratio 9</metric>
+    <metric>overload-ratio 10</metric>
+    <metric>overload-ratio 11</metric>
+    <metric>overload-ratio 12</metric>
+    <metric>overload-ratio 13</metric>
+    <metric>overload-ratio 14</metric>
+    <metric>overload-ratio 15</metric>
+    <metric>overload-ratio 16</metric>
+    <metric>overload-ratio 17</metric>
+    <metric>overload-ratio 18</metric>
+    <metric>overload-ratio 19</metric>
+    <metric>overload-ratio 20</metric>
+    <metric>overload-ratio 21</metric>
+    <metric>overload-ratio 22</metric>
+    <metric>overload-ratio 23</metric>
+    <metric>overload-ratio 24</metric>
+    <enumeratedValueSet variable="three-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="decay">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-nine">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="0.8"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-alpha">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="route-weight-power">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="two-ten">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="three-eight">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="one-nine">
       <value value="true"/>
     </enumeratedValueSet>
   </experiment>
