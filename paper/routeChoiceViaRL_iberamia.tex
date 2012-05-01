@@ -7,8 +7,8 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{subfigure}
-\usepackage{algpseudocode}
-\usepackage{algorithm}
+%\usepackage{algpseudocode}
+%\usepackage{algorithm}
      
 %\sloppy
 
@@ -151,70 +151,36 @@ The reward decreases as travel time increases, so drivers will strive to minimiz
 
 The proposed algorithm is based on Q-learning. For a description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
-\begin{algorithm}
-\caption{RL for route choice algorithm}
-\label{alg:RLforRouteChoice}
-\begin{algorithmic}
-
-\item \{* Initialization *\}
-\State $\epsilon \gets 1$
-\State $ODpair \gets random\_OD\_pair$
-\State $CurrentNode \gets Origin$
-\State $P \gets \phi$ \Comment{$P$ is the driver's route}
-\State $P^* \gets shortestPath(ODPair)$ \Comment{$P^*$ is the driver's shortest route}
-\item \{* Execution *\}
-
-\While{$CurrentNode \neq Destination$}
-  \If{$random() \leq \epsilon$}
-      \State $CurrentLink \gets RandomOutboundLink$
-  \Else
-      \State $CurrentLink \gets LinkWithMaxQ$
-  \EndIf
-  \State $P \gets P \cup \{CurrentLink\}$
-  \State $CurrentNode \gets destinationOf(CurrentLink)$
-\EndWhile
-
-\item Calculate travel time for route $P$
-
-\For{$l \in P$}
-  \item Update Q table for $l$
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
 \subsubsection{Initialization:}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Drivers also initialise the exploration coefficient ($\epsilon$) at 1. This means that drivers will explore in the beginning to gain knowledge about the road network.
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Drivers also initialize the exploration coefficient ($\epsilon$) to 1. This means that drivers will explore in the beginning to gain knowledge about the road network.
 
 \subsubsection{Execution:}
 
 In each episode of this reinforcement learning for route choice algorithm, each driver follows the steps shown in Figure \ref{fig:flowchart}.
 
 \begin{figure}[ht]
-    \centerline{\includegraphics[width=7cm]{img/flowchart2.png}}
+    \centerline{\includegraphics[width=7cm]{img/flowchart3.png}}
     \caption{RL for route choice algorithm flowchart}
     \label{fig:flowchart}
 \end{figure}
-%TODO discuss hypothetic distribution on the text
 
-At step 1 the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, the destination node of the chosen link is reached. Step 3 tests whether the node reached in step 2 is the driver's final destination. If so, the trip ends, otherwise steps 1 and 2 are repeated. At step 4, drivers update their Q-tables on the entries regarding the links they traversed.
-
-and experience their travel times given by Eq. \eqref{eq:tt}.
-
-Then, at step 3, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(a)$ is the Q-value for action `choosing link $a$', $\alpha$ is the learning rate, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $a$. 
-
-\begin{equation}
-\label{eq:qlearning}
-Q(a) = (1 - \alpha) Q(a) + \alpha (R + \gamma max(Q(a')))
-\end{equation}
-
-%TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
-
- When the trip ends, each driver $i$ calculates the travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of the travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, with $\veh$ being the number of vehicles on link $l$.
+At episode start, all drivers are placed in their origins. At step 1, the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy: choose an arbitrary link with probability $\epsilon$, or choose the best link according to the Q-table with probability $1-\epsilon$. At step 2, the destination node of the chosen link is reached. At step 3, the driver tests whether the node reached is its final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculates its travel time $\att{i}$ experienced on it's route $\route{i}$. It is given by the sum of travel times experienced on each link of $\route{i}$. Eq. \eqref{eq:att} illustrates this, where $\veh$ is the number of vehicles on link $l$.
 
 \begin{equation}
 \label{eq:att}
 \att{i} = \sum_{l \in \route{i}} \travTime(\veh)
 \end{equation}
+
+Then, at step 5, drivers update their Q-tables using the Q-learning update formula (Eq. \eqref{eq:qlearning}), where $Q(l)$ is the Q-value for action `choosing link $l$', $\alpha$ is the learning rate, $\gamma$ is the discount factor and $R$ is the reward received by the driver for traversing link $l$, given by Eq. \eqref{eq:reward}. 
+
+\begin{equation}
+\label{eq:qlearning}
+Q(l) = (1 - \alpha) Q(l) + \alpha (R + \gamma max(Q(l')))
+\end{equation}
+
+%TODO explain why only Q(a) instead of Q(s,a) // just adopt Q(s,a) ...?
+
+ At step 6, the exploration factor ($\epsilon$) is decreased by a multiplicative factor so that in the next episode the driver will do less exploration and more exploitation of its knowledge.
 
 \subsection{Evaluation metrics}
 
@@ -228,18 +194,18 @@ In a real world situation, drivers have an expectation on the travel time needed
 \ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times achieved by the drivers of a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
+In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times of the drivers on a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
 
 \subsubsection{Road network load balance:}
 
-From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link on the network. Road network load balance will be measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, $n$ these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link on the network. Road network load balance will be measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
 \numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{l \in \congRoads} \left(\frac{\veh_l}{\linkCap} -1 \right)}{|C|}
 \end{equation}
 
-The two metrics are needed because $n$ does not measures how heavy are the links congestions and $o$ does not shows how many links are overloaded. For both ($n$) and ($o$), smaller values means better performance, as less links are congested and the severity of congestions is lower.
+Both metrics are needed because $n$ alone does not measures how heavy are the links congestions and $o$ does not shows how many links are overloaded. For both ($n$) and ($o$), smaller values means better performance, as less links are congested and the severity of congestions is lower.
 
 \subsection{Studied scenario}
 
@@ -317,13 +283,11 @@ On the defined load balance evaluation metrics, the minority game based approach
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-In this work we presented a new algorithm for route choice in an abstract traffic scenario using reinforcement learning. Our approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as links does not get heavily congested.
+In this work we applied the concept of independent learners in a complex, non-cooperative scenario. Our reinforcement learning for route choice algorithm is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as links does not get heavily congested.
 
 The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of links. This makes our algorithm an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
 
-This work is a successful application of the independent learners concept on a complex, competitive scenario. Agents learned how to choose routes to their destinations even considering other agents as part of the environment.
-
-Further investigation can be conducted to assess how the algorithm performs in heterogeneous scenarios. That is, it would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game algorithm proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
+Further investigation can be conducted to assess how the algorithm performs in heterogeneous scenarios. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game algorithm proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
 
 \bibliographystyle{splncs03}
 \bibliography{references,stringDefs,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
