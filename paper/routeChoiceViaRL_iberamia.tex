@@ -102,7 +102,7 @@ Reinforcement learning (RL) deals with the problem of making an agent learn a be
 Usually, a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. $T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
 
 The optimal value of a state, $V^*(s)$, is the expected infinite discounted sum of rewards that the agent gains by starting at state $s$ and following the optimal policy. A policy $(\pi)$ maps the current environment state $s \in S$ to an action $a \in A$ to be performed by the agent. The optimal policy $(\pi^*)$ represents the mapping from states to actions which maximizes the future reward.
-
+%TODO remover ``A policy pi maps....''
 %For the next sections it will be assumed that the reader is familiar with Q-learning. For more information about Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \subsection{Multiagent Reinforcement Learning} 
