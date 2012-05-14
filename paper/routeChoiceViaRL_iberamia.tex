@@ -19,9 +19,9 @@
 \newcommand{\route}[1]{\ensuremath{P_#1}}	%route for driver 'i'
 \newcommand{\optRoute}[1]{\ensuremath{P_#1^*}}	%optimal route for driver 'i'
 
-\newcommand{\travTime}{\ensuremath{t_l}} 	%travel time on link 'l'
-\newcommand{\fftt}{\ensuremath{f_l}} 		%free-flow travel time of link 'l'
-\newcommand{\linkCap}{\ensuremath{c_l}}		%capacity of link 'l'
+\newcommand{\travTime}{\ensuremath{t_j}} 	%travel time on link 'j'
+\newcommand{\fftt}{\ensuremath{f_j}} 		%free-flow travel time of link 'j'
+\newcommand{\linkCap}{\ensuremath{c_j}}		%capacity of link 'j'
 \newcommand{\veh}{\ensuremath{v}}		%number of vehicles
 
 \newcommand{\ett}[1]{\ensuremath{e_#1}}		%estimated travel time for agent 'i'
@@ -39,14 +39,15 @@
 
 
 \author{
-  Anderson R. Tavares\inst{1} \and Ana L. C. Bazzan\inst{1}
+  %Anderson R. Tavares\inst{1} \and Ana L. C. Bazzan\inst{1}
 }
 
-\institute{Instituto de Inform\'atica -- Universidade Federal do Rio Grande do Sul
-  (UFRGS)\\
-  Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-  \email{\{artavares,bazzan\}@inf.ufrgs.br}
-}
+\institute{
+%Instituto de Inform\'atica -- Universidade Federal do Rio Grande do Sul
+%   (UFRGS)\\
+%   Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
+%   \email{\{artavares,bazzan\}@inf.ufrgs.br}
+ }
 
 \begin{document}
 
@@ -91,7 +92,7 @@ One of the most common cost function that relates link's attributes (capacity, f
 \travTime(\veh) = \fftt[1 + \tau \left(\frac{\veh}{\linkCap}\right)^\beta]
 \end{equation}
 
-In this function, $\travTime$ is the travel time on link $l$, $\linkCap$ is the link's capacity, $\fftt$ is the free-flow travel time on link $l$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
+In this function, $\travTime$ is the travel time on link $j$, $\linkCap$ is the link's capacity, $\fftt$ is the free-flow travel time on link $j$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
 
 \subsection{Reinforcement Learning}
 
@@ -114,7 +115,7 @@ For a complete description of Q-learning, the reader may refer to \cite{Watkins&
 \subsection{Independent learners} 
 Traffic scenarios are non-cooperative multi-agent systems, as there are several agents interacting with the environment and coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) tasks can be divided in two forms: independent learners (ILs), that ignore the existance of other agents and joint action learners (JALs), that learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. ILs understand other agents learning and changing their behavior as a change of environment dynamics. In the present work, agents will be modeled as ILs.
 
-Modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. In complex scenarios like traffic, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning becomes invalid, as the environment is nonstationary. Also, it is remarked by \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Even so, some researchers achieved amazing results with this approach.
+Modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning becomes invalid, as the environment is nonstationary. Also, it is remarked by \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Even so, some researchers achieved amazing results with this approach.
 %A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, so that the adoption of learning (or adapting) agents is a feasible alternative \cite{Busoniu+2008smc}.
 
 
@@ -128,13 +129,17 @@ Modeling agents as JALs leads to scalability problems, as agents must consider e
 
 %With this process, a Pareto-efficient distribution or the Wardrop's equilibrium \cite{Wardrop1952} may be reached. In this condition, no agent can reduce its costs by switching routes without rising costs for other agents. 
 
-Traffic assignment problems are tackled with several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Chmura&Pitz2007,Kluegl&Bazzan2004}. The former analyses the effect of different strategies on minority game for binary route choice. The second uses a reinforcement learning scheme to reproduce human decision-making in a corresponding experimental study. The third includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest on the present work is to evaluate a route choice algorithm in a more complex scenario, with several available routes.
+Traffic assignment problems are tackled with several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004}. The former analyses the effect of different strategies on minority game for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest on the present work is to evaluate a route choice approach in a more complex scenario, with several available routes.
 
 This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. On their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
 More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The modified minority game algorithm uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The algorithm proposed on the present work will be compared with the modified minority game. 
 
-Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
+%TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
+
+Learning-based models for route choice are studied in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors present a reinforcement algorithm and in the latter, a reinforcement-based model of route-choice behavior with availability of real-time information is presented. Both works try to reproduce human decision-making in corresponding experimental studies, based on two-route scenarios. The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes.
+
+In the literature review performed for the present work, a reinforcement learning based approach for the route choice process itself was not found. Either researchers present other approaches for the problem or the reinforcement-based schemes are used to try to reproduce human behavior.
 
 \section{Approach and scenario}
 \label{sec:proposal}
@@ -152,10 +157,10 @@ The reward decreases as travel time increases, so drivers will strive to minimiz
 
 \subsection{Building the route:}
 
-Each learning episode is a trip that drivers do from their origins to their destinations.
+Each learning episode is a trip that drivers do departing from their origins and building a route to their destinations.
 
 \subsubsection{Initialization:}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. As the costs of all links are the same, the shortest route is the one with less links between origin and destination. Drivers also initialize the exploration coefficient ($\epsilon$) to 1. This means that drivers will explore in the first episodes to gain knowledge about the road network and exploit it in the final episodes.
+At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. In this phase, the shortest route is considered as the one with less links between origin and destination. Drivers also initialize the exploration coefficient ($\epsilon$) to 1. This means that drivers will explore in the first episodes to gain knowledge about the road network and exploit it in the final episodes.
 
 \subsubsection{Execution:}
 
@@ -167,11 +172,11 @@ In each episode of this reinforcement learning for route choice algorithm, each 
     \label{fig:flowchart}
 \end{figure}
 
-At episode start, all drivers are placed in their origins. At step 1, the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy. At step 2, the destination node of the chosen link is reached. At step 3, the driver tests whether the node reached is its final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculates its travel time $\att{i}$ experienced on it's route $\route{i}$, given by Eq. \eqref{eq:att}, where $\veh$ is the number of vehicles on link $l$.
+At episode start, all drivers are placed in their origins. At step 1, the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy. At step 2, the destination node of the chosen link is reached. At step 3, the driver tests whether the node reached is its final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculates its travel time $\att{i}$ experienced on it's route $\route{i}$, given by Eq. \eqref{eq:att}, where $\veh$ is the number of vehicles on link $j$.
 
 \begin{equation}
 \label{eq:att}
-\att{i} = \sum_{l \in \route{i}} \travTime(\veh)
+\att{i} = \sum_{j \in \route{i}} \travTime(\veh)
 \end{equation}
 
 Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration factor ($\epsilon$) is decreased by a multiplicative factor.
@@ -183,23 +188,23 @@ In real world, drivers have an expectation on the trip travel time on the route 
 
 \begin{equation}
 \label{eq:ett}
-\ett{i} = \sum_{l \in \optRoute{i}}\travTime(\expVeh)
+\ett{i} = \sum_{j \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED was created. It is given by the average of the difference between actual and expected travel times of the drivers on a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
+In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED (\underline{a}ctual and \underline{e}xpected travel time \underline{d}ifference) was created. It is given by the average of the difference between actual and expected travel times of the drivers on a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
 
 \subsubsection{Road network load balance:}
 
-From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link on the network. Road network load balance will be measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_l$ and $\linkCap$ are the number of vehicles and the capacity of link $l$, respectively. 
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link on the network. Road network load balance will be measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, these metrics will be measured according to Eq. \eqref{eq:balanceMetrics}, where $\veh_j$ and $\linkCap$ are the number of vehicles and the capacity of link $j$, respectively. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
-\numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{l \in \congRoads} \left(\frac{\veh_l}{\linkCap} -1 \right)}{|C|}
+\numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{\substack{j \in \congRoads}} \left(\frac{\veh_j}{\linkCap} -1 \right)}{|C|}
 \end{equation}
 
 Both metrics are needed because $n$ alone does not measures how heavy are the links congestions and $o$ does not shows how many links are overloaded. For both ($n$) and ($o$), smaller values means better performance, as less links are congested and the severity of congestions is lower.
 
-\subsection{Studied scenario}
+\subsection{Studied scenario} 
 
 The abstract road network used in the present work is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. The network links have the same weights, representing no differences on their lengths.
 
@@ -244,7 +249,7 @@ Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4
 
 \subsection{Comparison with other algorithms}
 
-For each algorithm, the AED (actual and expected travel time difference) is shown on Figure \ref{fig:travelTimeComparison}. 
+For each algorithm, the AED metric is shown on Figure \ref{fig:travelTimeComparison}. 
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=8.5cm]{img/travelTimeComparison.png}}
