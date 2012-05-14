@@ -54,7 +54,7 @@
 \maketitle
 
 \begin{abstract}
-Traffic movement in a commuting scenario is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice made by drivers. This work presents a reinforcement learning algorithm for route choice which relies solely on drivers experience to guide their decisions. There is no coordinated learning mechanism, so that driver agents are independent learners. Our algorithm is compared to other approaches and experimental results shows good performance regarding travel times and road network load balance. The simplicity, realistic assumptions and performance of the proposed algorithm makes it feasible of being implemented on navigation systems.
+Traffic movement in a commuting scenario is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice made by drivers. This work presents a reinforcement learning based approach for route choice which relies solely on drivers experience to guide their decisions. There is no coordinated learning mechanism, so that driver agents are independent learners. Our approach is compared to other methods and experimental results shows good performance regarding travel times and road network load balance. The simplicity, realistic assumptions and performance of the proposed approach makes it feasible of being implemented on navigation systems.
 \end{abstract}
 
 
@@ -73,7 +73,7 @@ In a commuting scenario, it is reasonable to assume that drivers choose their ro
 
 Traffic assignment deals with route choice between origin-destination pairs in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem so that agents make decisions using only their own experience which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the several available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic traffic engineering, single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses related work done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice algorithm whose results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic traffic engineering, single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses related work done in this field. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach whose results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further study.
 
 \section{Background}
 \label{sec:concepts}
@@ -133,7 +133,7 @@ Traffic assignment problems are tackled with several approaches, many of them co
 
 This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. On their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
-More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The modified minority game algorithm uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The algorithm proposed on the present work will be compared with the modified minority game. 
+More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The modified minority game algorithm uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The approach proposed on the present work will be compared with the modified minority game. 
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
@@ -164,11 +164,11 @@ At the beginning of execution, OD pairs are randomly distributed among drivers. 
 
 \subsubsection{Execution:}
 
-In each episode of this reinforcement learning for route choice algorithm, each driver follows the steps shown in Figure \ref{fig:flowchart}.
+In each episode, each driver follows the steps shown in Figure \ref{fig:flowchart}.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=7cm]{img/flowchart3.png}}
-    \caption{RL for route choice algorithm flowchart}
+    \caption{RL for route choice flowchart}
     \label{fig:flowchart}
 \end{figure}
 
@@ -191,7 +191,7 @@ In real world, drivers have an expectation on the trip travel time on the route 
 \ett{i} = \sum_{j \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-In order to assess how reasonable are the travel time obtained by drivers using the proposed algorithm, a metric called AED (\underline{a}ctual and \underline{e}xpected travel time \underline{d}ifference) was created. It is given by the average of the difference between actual and expected travel times of the drivers on a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
+In order to assess how reasonable are the travel time obtained by drivers using the proposed approach, a metric called AED (\underline{a}ctual and \underline{e}xpected travel time \underline{d}ifference) was created. It is given by the average of the difference between actual and expected travel times of the drivers on a given OD pair. For this metric, negative values are desired as this means that actual travel times are lower than the expected by the drivers.
 
 \subsubsection{Road network load balance:}
 
@@ -214,7 +214,7 @@ The abstract road network used in the present work is the same used by \cite{Gal
     \label{fig:roadnetwork}
 \end{figure}
 
-The proposed algorithm will be compared with three different approaches:
+The RL for route choice will be compared with three different methods:
 
 \begin{itemize}
   \item Random: At each step, drivers choose one of the possible outbound links with random probability.
@@ -274,16 +274,16 @@ In this metric, the RL approach outperforms the others, achieving reasonable tra
   \label{fig:loadBalance}
 \end{figure}
 
-On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The RL based algorithm achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
+On the defined load balance evaluation metrics, the minority game based approach achieved the best results. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-In this work we applied the concept of independent learners in a complex, non-cooperative scenario. Our reinforcement learning for route choice algorithm is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as links does not get heavily congested.
+In this work we applied the concept of independent learners in a complex, non-cooperative scenario. Our reinforcement learning for route choice approach is helpful for either individual and global point of view, as drivers achieve reasonable travel times on average, and traffic is distributed over the network, as links does not get heavily congested.
 
-The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of links. This makes our algorithm an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
+The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of links. This makes our approach an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
 
-Further investigation can be conducted to assess how the algorithm performs in heterogeneous scenarios. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game algorithm proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
+Further investigation can be conducted to evaluate heterogeneous scenarios. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game algorithm proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
 
 \section{Acknowledgments}
 
