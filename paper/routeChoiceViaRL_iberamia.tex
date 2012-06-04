@@ -1,5 +1,22 @@
-\documentclass[12pt]{llncs}
-%\usepackage{sbc-template}
+\documentclass{RITA}
+\usepackage{graphicx,url}
+\usepackage{subfigure}
+%\usepackage[brazil]{babel}   
+\usepackage[latin1]{inputenc}  
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\author{
+  Anderson Rocha Tavares\footnote{Instituto de Inform\'atica, UFRGS, Caixa Postal~15064\\
+  \texttt{\{artavares,bazzan@inf.ufrgs.br\}}}
+  \and Ana Lucia Cetertich Bazzan\footnotemark[1]
+}
+
+\title{Independent learners in an abstract traffic scenario}
+
+\RITAvolume{XIX}
+\RITAnumber{1}
+\RITAyear{2012}
 \usepackage{graphicx,url}
 
 %\usepackage[brazil]{babel}   
@@ -10,10 +27,6 @@
 %\usepackage{algpseudocode}
 %\usepackage{algorithm}
      
-%\sloppy
-
-%\pdfpagewidth=8.5truein
-%\pdfpageheight=11truein
 
 % Equation terms definition
 \newcommand{\route}[1]{\ensuremath{P_#1}}	%route for driver 'i'
@@ -35,19 +48,7 @@
 \newcommand{\numCong}{\ensuremath{n}}		%number of congested roads
 \newcommand{\overLoadFactor}{\ensuremath{o}}	%overload factor - measures severity of congestions
 
-\title{Independent learners in an abstract traffic scenario}
 
-
-\author{
-  %Anderson R. Tavares\inst{1} \and Ana L. C. Bazzan\inst{1}
-}
-
-\institute{
-%Instituto de Inform\'atica -- Universidade Federal do Rio Grande do Sul
-%   (UFRGS)\\
-%   Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-%   \email{\{artavares,bazzan\}@inf.ufrgs.br}
- }
 
 \begin{document}
 
