@@ -74,7 +74,7 @@ In a commuting scenario, it is reasonable to assume that drivers choose their ro
 
 Traffic assignment deals with route choice between origin-destination pairs in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem so that agents make decisions using only their own experience, which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the ones available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic traffic engineering, single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach whose results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic traffic engineering, single and multiagent reinforcement learning concepts that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach, whose results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
 
 \section{Background}
 \label{sec:concepts}
@@ -101,7 +101,8 @@ Reinforcement learning (RL) deals with the problem of making an agent learn a be
 
 The agent interacts with the environment following a policy $\pi$ and tries to learn the optimal policy $\pi^*$ that maps the current environment state $s \in S$ to an action $a \in A$ in a way that the future reward is maximized. At each state, the agent must select an action $a$ according to a strategy that balances exploration (gain of knowledge) and exploitation (use of knowledge). One of the strategies is $\epsilon$-greedy: choose a random action (exploration) with probability $\epsilon$ or choose the best action (exploitation) with probability $1 - \epsilon$. In the beginning, $\epsilon$ starts with a higher value (high exploration) and decreases with time, leading to high exploitation at the end.
 
-Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Kaelbling+1996}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha$ is the learning rate and $\gamma$ is the discount factor.
+Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Watkins&Dayan1992}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha$ is the learning rate and $\gamma$ is the discount factor. $Q(s,a)$ is an entry indexed by state $s$ and action $a$ in the Q-table, which stores the values (called Q-values) of state-action pairs. The Q-value is the expected discounted reward for executing action $a$ at
+state $s$ and following the policy $\pi$ thereafter.
 
 \begin{equation}
 \label{eq:qlearning}
@@ -201,7 +202,7 @@ Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearn
 \subsection{Evaluation metrics}
 
 \subsubsection{Reasonable travel times:}
-In real world, drivers have an expectation on the trip travel time on the route length, the expected number of drivers in it and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his shortest route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range $[-0,05d:0,05d]$, where $d$ is the total number of drivers on the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
+In the real world, drivers have an expectation on the trip travel time on the route length, the expected number of drivers in it and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his shortest route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range $[-0,05d:0,05d]$, where $d$ is the total number of drivers on the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
 
 \begin{equation}
 \label{eq:ett}
