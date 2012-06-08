@@ -137,7 +137,7 @@ Traffic assignment problems can be addressed by several approaches, many of them
 This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. In their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful en-route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
 %More recently, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for use in a complex scenario with several available routes. 
-The problem of traffic assignment can also be tackled by an evolutionary game called minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1992}.
+The problem of traffic assignment can also be tackled by an evolutionary game called minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
 
 The minority game consists of an odd number of player agents that must choose between two options at each round. Agents on the minority side receive one point. The only information available for agents is the history of winning options. Each agent has a set of strategies that predicts the next winning option given the history. Agents score each strategy according to the number of times it went correct and they use the best strategy to make the prediction for the next round.
 
@@ -147,11 +147,11 @@ Regarding the traffic assignment problem, the minority game can only be used in 
 
 Learning-based models for route choice are studied in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors present a reinforcement algorithm and in the latter, a reinforcement-based model of route-choice behavior with availability of real-time information is presented. Both works try to reproduce human decision-making in corresponding experimental studies, based on two-route scenarios. The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes.
 
-A reinforcement learning based approach for route choice can be found in \cite{Tavares&Bazzan2012}. The authors model the traffic assignment as a MDP with no states. The action set comprises the selection of one network link and the reward function is based on travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and good results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+A reinforcement learning based approach for route choice can be found in \cite{Tavares&Bazzan2012}. The authors model the traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and good results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
 
-On the present work, the traffic assignment problem will be modeled as a MDP with states. Also, the reward function is simplified taking into account only the travel time on the chosen link. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
+On the present work, the traffic assignment problem will be modeled as a MDP with states and the reward function is simplified taking into account only the travel time on the chosen link. Also, new metrics for road congestion evaluation are proposed. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
 
-In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (real-time information, minority games or en-route replanning) for the problem or the reinforcement-based schemes are used to try to reproduce human behavior in two-route scenarios.
+In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (like use of real-time information or minority games) for the problem or the reinforcement-based schemes are used to try to reproduce human behavior in two-route scenarios.
 
 \section{Approach and scenario}
 \label{sec:proposal}
@@ -191,7 +191,12 @@ At episode start, all drivers are placed in their origins. At step 1, the driver
 \att{i} = \sum_{j \in \route{i}} \travTime(\veh)
 \end{equation}
 
-Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration factor ($\epsilon$) is decreased by a multiplicative factor.
+Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration factor ($\epsilon$) is decreased by a fixed multiplicative factor $\lambda$. The value of $\lambda$ depends on the desired initial and final values of $\epsilon$ and the number of learning episodes. Equation \eqref{eq:lambda} shows the relation of these variables, where $m$ is the number of learning episodes, $\epsilon_0$ and $\epsilon_f$ are the initial and final value of $\epsilon$, respectively.
+
+\begin{equation}
+\label{eq:lambda}
+\lambda = \sqrt[m]{\frac{\epsilon_f}{\epsilon_0}}
+\end{equation}
 
 \subsection{Evaluation metrics}
 
