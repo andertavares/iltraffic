@@ -26,6 +26,7 @@
 ;TODO armazenar tempo medio de viagem para cada motorista - OK
 ;TODO potencializar efeito de vias ocupadas?
 ;TODO mostrar media de 'n' ultimos episodios?
+;TODO implementar 'in-route?' com uma busca no grafo
 
 ; ROTAS MINIMAS:
 ; 1-8: 2-8-15 / 2-9-17 / 3-12-19 / 3-11-17 / 3-10-15
@@ -38,12 +39,19 @@
 ; 3-9: 9-18
 ; 3-10: 9-17-23 / 9-18-24 / 7-12-21 / 8-15-23
 
+
+extensions [ array ]
+
 globals [
   num-intersections 
   num-roads 
   ideal-segment-length
   od-pairs
   avg-occ-dev ;average deviation of the difference of "optimal" # of cars and actual # of cars
+  
+  dijkstra-distances     ;; shortest path distance from initial node to all other nodes
+  dijkstra-directions    ;; which direction to head in for shortest path --> the 'previous' array
+  nodes-visited          ;; total number of nodes visited by all walkers
 ]
 
 breed [ intersections intersection ]
@@ -89,6 +97,8 @@ drivers-own [
   current-road  ;via atual (a via mesmo, nao o ID)
   
   q-table       ;tabela Q
+  
+  travel-times ;list of travel-times for every road
 ]
 
 to setup 
@@ -207,6 +217,9 @@ to load-drivers-from-file
   
   file-close
   set num-drivers count drivers
+  
+  ;calculate the expected travel time (should it be moved to setup-driver?)
+  calculate-ett
 end
 
 ;clear all statistics and resets original values of entities attributes 
@@ -700,6 +713,97 @@ to load-cap
   
   calculate-ett
   setup-roads-thickness
+end
+
+;calculates the shortest path between orig and dest 
+;using the travel times as the edges weight
+to-report calculate-min-z-route [orig dest]
+  let initial-node one-of intersections with [id = orig]
+    
+  initialise-distances [who] of initial-node
+  
+  let nodes-to-visit []
+  ask initial-node [
+    set nodes-to-visit other intersections;; this is the list of nodes yet to have been visited
+  ]
+  ;performs dijkstra using the q-values as the graph weights
+  perform-dijkstra initial-node nodes-to-visit q-table;travel-times
+  
+  ;now dijkstra-directions is the 'previous' vector
+  let previous array:to-list dijkstra-directions
+  let curr-node dest
+  let the-route []
+  
+  while [curr-node != orig] [
+    set the-route fput curr-node the-route
+    set curr-node 1 + item (curr-node - 1) previous
+  ]
+  report the-route
+end
+
+;initialise the dijkstra distances array and the 'previous' array as well
+to initialise-distances [initial-node]
+  set dijkstra-distances array:from-list n-values num-intersections [1000000] ;; "infinity"
+  set dijkstra-directions array:from-list n-values num-intersections [nobody]
+  array:set dijkstra-distances initial-node 0 ;; set distance to 0 for initial node
+end
+
+;; calculates the distance array for the Dijkstra algorithm using the initial node
+;; as the focal point -- z-values contains the weight of each edge
+to perform-dijkstra [initial-node nodes-to-visit weights]
+
+  set nodes-visited 0
+  
+  initialise-distances [who] of initial-node
+  
+  let visited-set [] ;; this is the list of nodes that have been visited
+  let unvisited-set nodes-to-visit ;; this is the list of nodes yet to have been visited
+     
+  let curr-node initial-node
+  while [count unvisited-set > 0]
+  [
+   
+    ask curr-node
+    [
+      set nodes-visited nodes-visited + 1
+      set visited-set fput who visited-set
+      set unvisited-set other unvisited-set
+
+      ask out-link-neighbors
+      [
+        ;let dist-thru-here (array:item dijkstra-distances [who] of curr-node) + 1 ;cost of next hop
+        let dist-thru-here (array:item dijkstra-distances [id - 1] of curr-node) + dist-between curr-node self weights;cost of next hop
+        let dist-thru-to-there array:item dijkstra-distances (id - 1)
+        
+        if (dist-thru-here < dist-thru-to-there) [ 
+          array:set dijkstra-distances who dist-thru-here
+          array:set dijkstra-directions who [who] of curr-node 
+        ]
+      ]
+      
+      ;; set the curr-node to the remaining unvisited node that has the smallest distance to the initial node      
+      set curr-node min-one-of unvisited-set [array:item dijkstra-distances who]
+    ]
+  ]
+  
+  ;; print array:to-list dijkstra-distances
+
+end
+
+to-report dist-between [node-a node-b weights]
+  let rid [road-id] of one-of roads with [end1 = node-a and end2 = node-b]
+  report item (rid - 1) weights
+end
+
+; shows the 'previous' array
+to dump-dijkstra-directions
+  show dijkstra-directions
+  let i 0
+  foreach array:to-list dijkstra-directions
+  [
+    if (? != nobody) [ type " from: " type i type " thru: " type ? type " dist: " print array:item dijkstra-distances i ]
+    set i i + 1
+  ]
 end
 
 ;configures the nodes appearence
@@ -1365,7 +1469,7 @@ epsilon
 epsilon
 0
 1
-0.026297053742515984
+0.1000000004521861
 .1
 1
 NIL
@@ -1507,10 +1611,10 @@ NIL
 NIL
 
 SWITCH
-739
-413
-842
-446
+735
+429
+838
+462
 avg?
 avg?
 0
@@ -1625,7 +1729,7 @@ INPUTBOX
 266
 265
 decay
-0.95499
+0.977237221
 1
 0
 Number
