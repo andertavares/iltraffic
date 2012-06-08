@@ -93,10 +93,9 @@ drivers-own [
 
 to setup 
     clear-all
-    setup-network
+    ;setup-network "mgta2"
+    setup-network "inputs/6x6-papers.txt"
     setup-drivers
-    
-    ask intersections [ set label id ]
 end
 
 to setup-std-scenario
@@ -115,9 +114,7 @@ to go
   ]
   
   experience-travel-times
-  update-q-table
-  ;update-history
-  
+  update-q-table 
   update-roads-visual
   
   ;updates the avg-occ-dev
@@ -136,29 +133,24 @@ to step
   advance
 end
 
+;initializes the drivers
 to setup-drivers
   
   ;monta a lista com os pares OD, a partir dos valores selecionados pelos usuarios
   set od-pairs []
   
-  if one-eight [ set od-pairs fput [1 8] od-pairs ]
-  if one-nine [ set od-pairs fput [1 9] od-pairs ]
-  if one-ten [ set od-pairs fput [1 10] od-pairs ]
-  if two-eight [ set od-pairs fput [2 8] od-pairs ]
-  if two-nine [ set od-pairs fput [2 9] od-pairs ]
-  if two-ten [ set od-pairs fput [2 10] od-pairs ]
-  if three-eight [ set od-pairs fput [3 8] od-pairs ]
-  if three-nine [ set od-pairs fput [3 9] od-pairs ]
-  if three-ten [ set od-pairs fput [3 10] od-pairs ]
-  
+  ;REMOVE AFTER TESTING V2V -- better: parametrize in file
+  ;set od-pairs [[1 9]]
+  ;set od-pairs [[1 25]] ;this one is for the 5x5 scenario
+  ;set od-pairs [[1 36]] ;this one is for the 6x6 scenario
+  ;set od-pairs [[1 4]] ;for Pigou's example and queue-test
+  set od-pairs read-from-string od-pairs-list
   
   create-drivers num-drivers [
     let od-pair one-of od-pairs
     
     set origin item 0 od-pair ;1 + random 3  ;origem em nos 1, 2 ou 3
     set destination item 1 od-pair ;8 + random 3 ;destino em 8, 9 ou 10
-    
-    ;show (word origin "-" destination)
     
     setup-driver origin destination
   ]
@@ -190,6 +182,31 @@ to setup-driver [the-origin the-destination]
   set shape "car"
   set size 3
     
+end
+
+; creates drivers according to a trips file definition
+; previously created drivers are deleted
+to load-drivers-from-file
+  let infile user-file
+  
+  ask drivers [die]
+  
+  file-open infile
+  
+  set od-pairs []
+  while [not file-at-end?] [
+    let orig file-read
+    let dest file-read
+    let num-commuters file-read
+    
+    create-drivers num-commuters [
+      setup-driver orig dest
+    ]
+
+  ]
+  
+  file-close
+  set num-drivers count drivers
 end
 
 ;clear all statistics and resets original values of entities attributes 
@@ -441,7 +458,7 @@ to experience-travel-times
     set actual-tt attR
     set average-tt ((actual-tt - average-tt) / (ticks + 1)) + average-tt
     
-    set route-weight actual-tt / expected-tt
+    ;set route-weight actual-tt / expected-tt
     
     ;atualiza o vetor de pesos de rota por aresta
     foreach current-route [
@@ -505,7 +522,7 @@ to update-q-table
       
       ;calcula a recompensa
       let reward 0
-      let rew-tt -1 * road-tt ;* (item (rid - 1) roads-weight) ^ route-weight-power
+      let rew-tt -1 * road-tt 
       let rew-occ rocc - 1;^ 2 ;(1 / rocc) - 1; cap/num-drv - 1
       
       
@@ -608,12 +625,14 @@ to-report drivers-not-arrived
   report not all-arrived
 end
 
-to setup-network
+
+;configures the network
+to setup-network [network-file]
   clear-turtles
   
   set avg-occ-dev 0
     
-  file-open "mgta2" ;user-file
+  file-open network-file 
   set num-intersections file-read
   set num-roads file-read
   set ideal-segment-length file-read
@@ -632,7 +651,7 @@ to setup-network
     let r-id file-read
     let id1 file-read
     let id2 file-read
-    let primary? file-read
+    let the-capacity file-read
     ask intersections with [ id = id1 ]  [
       create-roads-to intersections with [id = id2] [
         set road-id r-id
@@ -643,23 +662,21 @@ to setup-network
         set avg-opt-drv 0
         
         set fftt 5
-        set capacity roads-capacity + random (cap-randomness + 1);130 ;+ random 121
-        ;set capacity num-drivers / 7.5 ;TODO REMOVER ISSO APOS TESTAR
+        ;if no capacity was informed in the file, assign the default 
+        ifelse the-capacity = false [
+          set capacity roads-capacity + random (cap-randomness + 1)
+        ]
+        [;else
+          set capacity the-capacity
+        ]
         set label road-id
         set label-color red
-        
-        ;set history n-values history-size [60 + random 81] ;historico de valores entre 60 e 140
       ]
     ]
   ]
   file-close  
   
   setup-roads-thickness
-  
-;  ask roads [
-;      set shape "default"
-;      set thickness .2
-;  ]
 end
 
 to save-cap 
@@ -685,10 +702,12 @@ to load-cap
   setup-roads-thickness
 end
 
+;configures the nodes appearence
 to update-node-visual
     set shape "circle 2"
     set size ideal-segment-length / 3
     set color 5
+    ask intersections [ set label id ]
 end
 
 to do-plots
@@ -699,7 +718,7 @@ end
 
 to plot-roads-data
   plot-drivers-per-road-column-chart
-  plot-roads-occupation
+  ;plot-roads-occupation
 end
 
 to-report avg-travel-time
@@ -835,6 +854,8 @@ to plot-drivers-per-road-column-chart
   ]
 end
 
+; plots the drivers-per-road linechart
+; for networks above 24 links, does not work because chart was created w/ 24 pens only
 to plot-roads-occupation
   set-current-plot "drivers-per-road-linechart"
   
@@ -888,20 +909,11 @@ end
 
   
 
+;adjust roads thickness according to the capacity
 to setup-roads-thickness 
-
   let min-cap min [capacity] of roads
-  ;let min-cap roads-capacity
-  ;let max-cap roads-capacity + cap-randomness
-  
-  if cap-randomness = 0 [ 
-    ask roads [set thickness .2] 
-    stop
-  ]
-
   ask roads [
-    set thickness (capacity - min-cap) * .7 / cap-randomness + .2
-    ;set thickness .2; .8 * capacity / cap-randomness - .67
+    set thickness capacity * road-thickness / min-cap
   ]
 end
 
@@ -1075,21 +1087,6 @@ NIL
 NIL
 NIL
 
-SLIDER
-21
-95
-193
-128
-num-drivers
-num-drivers
-1
-2002
-1001
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
 103
 52
@@ -1153,10 +1150,10 @@ NIL
 NIL
 
 SLIDER
-20
-136
-192
-169
+18
+158
+190
+191
 q-learning-alpha
 q-learning-alpha
 0
@@ -1329,10 +1326,10 @@ Occupation:
 1
 
 BUTTON
-179
-16
-276
-49
+180
+10
+277
+43
 go [num]
 repeat num-episodes [\ngo\n]
 NIL
@@ -1345,10 +1342,10 @@ NIL
 NIL
 
 SLIDER
-21
-185
+20
 193
-218
+192
+226
 q-learning-gamma
 q-learning-gamma
 0
@@ -1362,126 +1359,17 @@ HORIZONTAL
 SLIDER
 20
 227
-233
+193
 260
 epsilon
 epsilon
 0
 1
-1
+0.026297053742515984
 .1
 1
 NIL
 HORIZONTAL
-
-SWITCH
-1
-457
-127
-490
-one-eight
-one-eight
-0
-1
--1000
-
-SWITCH
-153
-458
-273
-491
-one-nine
-one-nine
-0
-1
--1000
-
-SWITCH
-303
-460
-416
-493
-one-ten
-one-ten
-0
-1
--1000
-
-SWITCH
-3
-498
-127
-531
-two-eight
-two-eight
-0
-1
--1000
-
-SWITCH
-152
-499
-270
-532
-two-nine
-two-nine
-0
-1
--1000
-
-SWITCH
-303
-499
-414
-532
-two-ten
-two-ten
-0
-1
--1000
-
-SWITCH
-2
-538
-140
-571
-three-eight
-three-eight
-0
-1
--1000
-
-SWITCH
-151
-539
-283
-572
-three-nine
-three-nine
-0
-1
--1000
-
-SWITCH
-303
-538
-428
-571
-three-ten
-three-ten
-0
-1
--1000
-
-TEXTBOX
-15
-439
-299
-457
-OD Pairs (click setup again if you change it):
-12
-0.0
-1
 
 PLOT
 441
@@ -1533,36 +1421,6 @@ reward-by
 "travel-time" "occupation" "both"
 2
 
-SLIDER
-293
-41
-465
-74
-roads-capacity
-roads-capacity
-1
-250
-130
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-295
-80
-507
-113
-cap-randomness
-cap-randomness
-0
-120
-120
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
 662
 477
@@ -1594,21 +1452,6 @@ NIL
 NIL
 NIL
 NIL
-
-SLIDER
-436
-353
-632
-386
-route-weight-power
-route-weight-power
-0
-5
-1
-.5
-1
-NIL
-HORIZONTAL
 
 MONITOR
 856
@@ -1766,10 +1609,10 @@ avg-occ-dev
 11
 
 INPUTBOX
-203
-49
-276
-109
+204
+42
+277
+102
 num-episodes
 100
 1
@@ -1777,12 +1620,87 @@ num-episodes
 Number
 
 INPUTBOX
-204
-177
-262
-237
+208
+205
+266
+265
 decay
+0.95499
 1
+0
+Number
+
+BUTTON
+963
+88
+1069
+122
+Load Trips
+load-drivers-from-file
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+
+INPUTBOX
+207
+281
+277
+341
+od-pairs-list
+[[1 10]]
+1
+0
+String
+
+SLIDER
+460
+349
+633
+382
+road-thickness
+road-thickness
+0.1
+3
+0.2
+0.1
+1
+NIL
+HORIZONTAL
+
+INPUTBOX
+21
+88
+96
+148
+num-drivers
+300
+1
+0
+Number
+
+INPUTBOX
+99
+89
+173
+149
+roads-capacity
+15
+1
+0
+Number
+
+INPUTBOX
+178
+90
+252
+150
+cap-randomness
+0
 1
 0
 Number

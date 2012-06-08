@@ -1,0 +1,124 @@
+36			;numero de nos
+60			;num. arestas
+8 			;comprimento 'ideal' da aresta
+
+;coordenadas dos nos
+1 -10 -6
+2 -6 -6
+3 -2 -6
+4 2 -6
+5 6 -6
+6 10 -6
+
+7 -10 -2
+8 -6 -2
+9 -2 -2
+10 2 -2
+11 6 -2
+12 10 -2
+
+13 -10 2
+14 -6 2
+15 -2 2
+16 2 2
+17 6 2
+18 10 2
+
+19 -10 6
+20 -6 6
+21 -2 6
+22 2 6
+23 6 6
+24 10 6
+
+25 -10 10
+26 -6 10
+27 -2 10
+28 2 10
+29 6 10
+30 10 10
+
+31 -10 14
+32 -6 14
+33 -2 14
+34 2 14
+35 6 14
+36 10 14
+
+;arestas de ligacao
+;id origem destino
+
+;horizontais
+1 1 2 false
+2 2 3 false
+3 3 4 false
+4 4 5 false
+5 5 6 false
+
+6 11 12 false
+7 10 11 false
+8 9 10 false
+9 8 9 false
+10 7 8 false
+
+11 14 13 false
+12 15 14 false
+13 16 15 false
+14 17 16 false
+15 18 17 false
+
+16 23 24 false
+17 22 23 45
+18 21 22 45
+19 20 21 45
+20 19 20 false
+
+21 26 25 false
+22 27 26 false
+23 28 27 false
+24 29 28 false
+25 30 29 false
+
+26 36 35 false
+27 35 34 false
+28 34 33 false
+29 33 32 false
+30 32 31 false
+
+;verticais
+31 31 25 false
+32 25 19 false
+33 19 13 false
+34 13 7 false
+35 7 1 false
+
+36 2 8  false
+37 8 14 false
+38 14 20 false
+39 20 26 false
+40 26 32 false
+
+41 33 27 false
+42 27 21 false
+43 21 15 false
+44 15 9 false
+45 9 3 false
+
+46 4 10 false
+47 10 16 false
+48 16 22 false
+49 22 28 false
+50 28 34 false
+
+51 35 29 false
+52 29 23 false
+53 23 17 45
+54 17 11 45
+55 11 5 false
+
+56 6 12  false
+57 12 18 false
+58 18 24 false
+59 24 30 false
+60 30 36 false
+
