@@ -40,7 +40,7 @@
 \newcommand{\ett}[1]{\ensuremath{e_#1}}		%estimated travel time for agent 'i'
 \newcommand{\expVeh}{\ensuremath{v_e}}		%estimated number of vehicles
 
-\newcommand{\att}[1]{\ensuremath{a_#1}}		%actual travel time for driver 'i' on route P
+\newcommand{\att}[1]{\ensuremath{u_#1}}		%actual travel time for driver 'i' on route P
 
 \newcommand{\reward}[1][]{\ensuremath{R_#1}}	%reward
 
@@ -96,12 +96,12 @@ One of the most common cost function that relates link's attributes (capacity, f
 In this function, $\travTime$ is the travel time on link $j$, $\linkCap$ is the link's capacity, $\fftt$ is the free-flow travel time on link $j$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
 
 \subsection{Reinforcement Learning}
-
+\label{sec:rl}
 Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interaction with the environment. Usually, a reinforcement learning problem is modeled as a Markov Decision Process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. %$T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
 
 The agent interacts with the environment following a policy $\pi$ and tries to learn the optimal policy $\pi^*$ that maps the current environment state $s \in S$ to an action $a \in A$ in a way that the future reward is maximized. At each state, the agent must select an action $a$ according to a strategy that balances exploration (gain of knowledge) and exploitation (use of knowledge). One of the strategies is $\epsilon$-greedy: choose a random action (exploration) with probability $\epsilon$ or choose the best action (exploitation) with probability $1 - \epsilon$. In the beginning, $\epsilon$ starts with a higher value (high exploration) and decreases with time, leading to high exploitation at the end.
 
-Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Kaelbling+1996}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where \linebreak$<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha$ is the learning rate and $\gamma$ is the discount factor.
+Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Kaelbling+1996}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha$ is the learning rate and $\gamma$ is the discount factor.
 
 \begin{equation}
 \label{eq:qlearning}
@@ -114,9 +114,11 @@ For a complete description of Q-learning, the reader may refer to \cite{Watkins&
 %For the next sections it will be assumed that the reader is familiar with Q-learning. For more information about Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \subsection{Independent learners} 
-Traffic scenarios are non-cooperative multi-agent systems, as there are several agents interacting with the environment and coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) tasks can be divided in two forms: independent learners (ILs), that ignore the existance of other agents and joint action learners (JALs), that learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. ILs understand other agents learning and changing their behavior as a change of environment dynamics. In the present work, agents will be modeled as ILs.
+Traffic scenarios are associated with the class of non-cooperative multi-agent systems, as there are several agents interacting with the environment and sometimes coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) can be divided in two classes: independent learners (ILs), in which agents ignore the existance of other agents, and joint action learners (JALs), in which agents learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. 
 
-Modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning becomes invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Even so, some researchers achieved amazing results with this approach.
+For an independent learner agent, the other agents learning and changing their behavior is understood as a change of environment dynamics. In the present work, agents will be modeled as ILs, because modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. 
+
+In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach as Littman \cite{Littman1994} also remarks.
 %A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, so that the adoption of learning (or adapting) agents is a feasible alternative \cite{Busoniu+2008smc}.
 
 
@@ -130,24 +132,33 @@ Modeling agents as JALs leads to scalability problems, as agents must consider e
 
 %With this process, a Pareto-efficient distribution or the Wardrop's equilibrium \cite{Wardrop1952} may be reached. In this condition, no agent can reduce its costs by switching routes without rising costs for other agents. 
 
-Traffic assignment problems are tackled with several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004}. The former analyses the effect of different strategies on minority game for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest on the present work is to evaluate a route choice approach in a more complex scenario, with several available routes.
+Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004}. The former analyses the effect of different strategies on minority game for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest on the present work is to evaluate a route choice approach in a more complex scenario, with several available routes.
 
-This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. On their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
+This kind of complex scenario was investigated by \cite{Bazzan&Kluegl2008}. In their work, Bazzan and Kl\"ugl assessed the effect of real time information on drivers' route replanning, including studies with adaptive traffic lights. In the most successful en-route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
-More recently, the minority game algorithm was modified for use in a complex scenario with several available routes \cite{Galib&Moser2011}. Using the proposed algorithm, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The modified minority game algorithm uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The approach proposed on the present work will be compared with the modified minority game. 
+%More recently, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for use in a complex scenario with several available routes. 
+The problem of traffic assignment can also be tackled by an evolutionary game called minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1992}.
+
+The minority game consists of an odd number of player agents that must choose between two options at each round. Agents on the minority side receive one point. The only information available for agents is the history of winning options. Each agent has a set of strategies that predicts the next winning option given the history. Agents score each strategy according to the number of times it went correct and they use the best strategy to make the prediction for the next round.
+
+Regarding the traffic assignment problem, the minority game can only be used in two-route choice scenarios as it is a two-alternative game. To overcome this limitation, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for a complex scenario with several available routes. In this modified version, agents' strategies predict a road's occupancy given the occupancy history on the past trips. Using the proposed approach, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The proposed approach uses historic usage data of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The approach proposed on the present work will be compared with the modified minority game. 
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
 Learning-based models for route choice are studied in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors present a reinforcement algorithm and in the latter, a reinforcement-based model of route-choice behavior with availability of real-time information is presented. Both works try to reproduce human decision-making in corresponding experimental studies, based on two-route scenarios. The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes.
 
-In the literature review performed for the present work, a reinforcement learning based approach for the route choice process itself was not found. Either researchers present other approaches for the problem or the reinforcement-based schemes are used to try to reproduce human behavior.
+A reinforcement learning based approach for route choice can be found in \cite{Tavares&Bazzan2012}. The authors model the traffic assignment as a MDP with no states. The action set comprises the selection of one network link and the reward function is based on travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and good results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+
+On the present work, the traffic assignment problem will be modeled as a MDP with states. Also, the reward function is simplified taking into account only the travel time on the chosen link. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
+
+In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (real-time information, minority games or en-route replanning) for the problem or the reinforcement-based schemes are used to try to reproduce human behavior in two-route scenarios.
 
 \section{Approach and scenario}
 \label{sec:proposal}
 
 \subsection{Reinforcement learning for route choice}
 
-The MDP for this problem is modeled as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles ($\veh$) on the link the agent traversed.
+The MDP model (as seen in Section \ref{sec:rl}) for this problem is as follows: the states are the nodes of the road network. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for the agents to choose, as it depends on which node of the network it is and whether the link belongs to an possible route to the agent's destination. The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles ($\veh$) on the link $j$.
 
 \begin{equation}
 \label{eq:reward}
@@ -156,12 +167,12 @@ The MDP for this problem is modeled as follows: the states are the nodes of the 
 
 The reward decreases as travel time increases, so drivers will strive to minimize their individual travel times.
 
-\subsection{Building the route:}
+\subsection{Building the route}
 
-Each learning episode is a trip that drivers do departing from their origins and building a route to their destinations.
+Each learning episode is a trip that drivers do departing from their origins and arriving at their destinations.
 
 \subsubsection{Initialization:}
-At the beginning of execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. In this phase, the shortest route is considered as the one with less links between origin and destination. Drivers also initialize the exploration coefficient ($\epsilon$) to 1. This means that drivers will explore in the first episodes to gain knowledge about the road network and exploit it in the final episodes.
+At the beginning of the execution, OD pairs are randomly distributed among drivers. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. In this phase, the shortest route is considered as the one with less links between origin and destination. Drivers also initialize the exploration coefficient ($\epsilon$) to 1. This means that drivers will initially explore to gain knowledge about the road network and exploit the acquired knowledge in the final episodes.
 
 \subsubsection{Execution:}
 
@@ -235,11 +246,11 @@ Several simulations were run to assess the effect of Q-learning parameters, name
 \begin{figure}[ht]
   \centering
   \subfigure[]{
-    \includegraphics[width=5.8cm]{img/travelTimeVsAlpha.png}
+    \includegraphics[width=7cm]{img/travelTimeVsAlpha.png}
     \label{fig:travelTimeVsAlpha}
   }
   \subfigure[]{
-    \includegraphics[width=5.8cm]{img/travelTimeVsGamma.png}
+    \includegraphics[width=7cm]{img/travelTimeVsGamma.png}
     \label{fig:travelTimeVsGamma}
   }
   \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time. Each parameter value was tested 10 times.}
@@ -253,7 +264,7 @@ Figure \ref{fig:qLearningParams} shows that for $\alpha$ within the range of 0.4
 For each algorithm, the AED metric is shown on Figure \ref{fig:travelTimeComparison}. 
 
 \begin{figure}[ht]
-    \centerline{\includegraphics[width=8.5cm]{img/travelTimeComparison.png}}
+    \centerline{\includegraphics[width=10cm]{img/travelTimeComparison.png}}
     \caption{AED metric comparison for each algorithm. RL and MG are the reinforcement learning and minority game approaches, respectively}
     \label{fig:travelTimeComparison}
 \end{figure}
@@ -265,7 +276,7 @@ In this metric, the RL approach outperforms the others, achieving reasonable tra
   \centering
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/numCongestedRoads.png}
-    \label{fig:numCongestedRoads}
+    \label{fig:numCongestedRoads} %TODO num of congested LINK
   }
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/averageOverload.png}
