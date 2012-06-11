@@ -192,7 +192,7 @@ At episode start, all drivers are placed in their origins. At step 1, the driver
 \att{i} = \sum_{j \in \route{i}} \travTime(\veh)
 \end{equation}
 
-Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration factor ($\epsilon$) is decreased by a fixed multiplicative factor $\lambda$. The value of $\lambda$ depends on the desired initial and final values of $\epsilon$ and the number of learning episodes. Equation \eqref{eq:lambda} shows the relation of these variables, where $m$ is the number of learning episodes, $\epsilon_0$ and $\epsilon_f$ are the initial and final value of $\epsilon$, respectively.
+Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration factor ($\epsilon$) is decreased by a fixed multiplicative factor $\lambda$. The value of $\lambda$ depends on the desired initial and final values of $\epsilon$ and the number of learning episodes. Equation \eqref{eq:lambda} shows the relation among these variables, where $m$ is the number of learning episodes, $\epsilon_0$ and $\epsilon_f$ are the initial and final value of $\epsilon$, respectively.
 
 \begin{equation}
 \label{eq:lambda}
