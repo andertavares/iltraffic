@@ -1470,7 +1470,7 @@ epsilon
 epsilon
 0
 1
-0.1000000004521861
+0.01000000416606889
 .1
 1
 NIL
@@ -1730,7 +1730,7 @@ INPUTBOX
 266
 265
 decay
-0.977237221
+0.95499259
 1
 0
 Number
@@ -1794,7 +1794,7 @@ INPUTBOX
 173
 149
 roads-capacity
-15
+130
 1
 0
 Number
@@ -1805,7 +1805,7 @@ INPUTBOX
 252
 150
 cap-randomness
-0
+120
 1
 0
 Number
@@ -2642,9 +2642,6 @@ NetLogo 4.1.3
     <metric>overload-ratio 22</metric>
     <metric>overload-ratio 23</metric>
     <metric>overload-ratio 24</metric>
-    <enumeratedValueSet variable="two-nine">
-      <value value="true"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="decay">
       <value value="0.95499259"/>
     </enumeratedValueSet>
@@ -2654,14 +2651,8 @@ NetLogo 4.1.3
     <enumeratedValueSet variable="plot-capacity?">
       <value value="true"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="three-eight">
-      <value value="true"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="num-drivers">
       <value value="1001"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="three-nine">
-      <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="avg?">
       <value value="true"/>
@@ -2672,31 +2663,13 @@ NetLogo 4.1.3
     <enumeratedValueSet variable="roads-capacity">
       <value value="130"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="one-eight">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="two-eight">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="two-ten">
-      <value value="true"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="epsilon">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="three-ten">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="route-weight-power">
       <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="tt-weight">
       <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="average?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="one-ten">
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="inst-road-view?">
@@ -2713,9 +2686,6 @@ NetLogo 4.1.3
     </enumeratedValueSet>
     <enumeratedValueSet variable="cap-randomness">
       <value value="120"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="one-nine">
-      <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="reward-by">
       <value value="&quot;both&quot;"/>
