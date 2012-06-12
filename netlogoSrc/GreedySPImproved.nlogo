@@ -943,16 +943,14 @@ to-report num-congested-roads
 end
 
 ;reports the aed metric, given by the average of the difference between actual and expected travel times on a given OD pair
-to-report aed [orig dest]
-  
+to-report aed [orig dest]  
   report mean [actual-tt - expected-tt] of drivers with [origin = orig and destination = dest]
-;  ask drivers with [origin = orig and destination = dest] [
-;    
-;  ]
 end
 
-
-
+;reports the standard deviation of the AED metric
+to-report std-dev-of-aed [orig dest]
+  report standard-deviation [actual-tt - expected-tt] of drivers with [origin = orig and destination = dest]
+end
 
 to setup-roads-thickness 
 
@@ -2289,6 +2287,15 @@ NetLogo 4.1.3
     <metric>aed 3 8</metric>
     <metric>aed 3 9</metric>
     <metric>aed 3 10</metric>
+    <metric>std-dev-of-aed 1 8</metric>
+    <metric>std-dev-of-aed 1 9</metric>
+    <metric>std-dev-of-aed 1 10</metric>
+    <metric>std-dev-of-aed 2 8</metric>
+    <metric>std-dev-of-aed 2 9</metric>
+    <metric>std-dev-of-aed 2 10</metric>
+    <metric>std-dev-of-aed 3 8</metric>
+    <metric>std-dev-of-aed 3 9</metric>
+    <metric>std-dev-of-aed 3 10</metric>
     <metric>overload-ratio 1</metric>
     <metric>overload-ratio 2</metric>
     <metric>overload-ratio 3</metric>

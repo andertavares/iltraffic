@@ -104,7 +104,8 @@ drivers-own [
 to setup 
     clear-all
     ;setup-network "mgta2"
-    setup-network "inputs/6x6-papers.txt"
+    ;setup-network "inputs/6x6-papers.txt"
+    setup-network "mgta2"
     setup-drivers
 end
 
@@ -1003,13 +1004,13 @@ end
 
 ;reports the aed metric, given by the average of the difference between actual and expected travel times on a given OD pair
 to-report aed [orig dest]
-  
   report mean [actual-tt - expected-tt] of drivers with [origin = orig and destination = dest]
-;  ask drivers with [origin = orig and destination = dest] [
-;    
-;  ]
 end
 
+;reports the standard deviation of the AED metric
+to-report std-dev-of-aed [orig dest]
+  report standard-deviation [actual-tt - expected-tt] of drivers with [origin = orig and destination = dest]
+end
 
   
 
@@ -1782,7 +1783,7 @@ INPUTBOX
 96
 148
 num-drivers
-300
+1001
 1
 0
 Number
@@ -2608,6 +2609,15 @@ NetLogo 4.1.3
     <metric>aed 3 8</metric>
     <metric>aed 3 9</metric>
     <metric>aed 3 10</metric>
+    <metric>std-dev-of-aed 1 8</metric>
+    <metric>std-dev-of-aed 1 9</metric>
+    <metric>std-dev-of-aed 1 10</metric>
+    <metric>std-dev-of-aed 2 8</metric>
+    <metric>std-dev-of-aed 2 9</metric>
+    <metric>std-dev-of-aed 2 10</metric>
+    <metric>std-dev-of-aed 3 8</metric>
+    <metric>std-dev-of-aed 3 9</metric>
+    <metric>std-dev-of-aed 3 10</metric>
     <metric>overload-ratio 1</metric>
     <metric>overload-ratio 2</metric>
     <metric>overload-ratio 3</metric>
@@ -2727,6 +2737,15 @@ NetLogo 4.1.3
     <metric>aed 3 8</metric>
     <metric>aed 3 9</metric>
     <metric>aed 3 10</metric>
+    <metric>std-dev-of-aed 1 8</metric>
+    <metric>std-dev-of-aed 1 9</metric>
+    <metric>std-dev-of-aed 1 10</metric>
+    <metric>std-dev-of-aed 2 8</metric>
+    <metric>std-dev-of-aed 2 9</metric>
+    <metric>std-dev-of-aed 2 10</metric>
+    <metric>std-dev-of-aed 3 8</metric>
+    <metric>std-dev-of-aed 3 9</metric>
+    <metric>std-dev-of-aed 3 10</metric>
     <metric>overload-ratio 1</metric>
     <metric>overload-ratio 2</metric>
     <metric>overload-ratio 3</metric>
