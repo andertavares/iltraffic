@@ -120,6 +120,13 @@ Traffic scenarios are associated with the class of non-cooperative multi-agent s
 For an independent learner agent, the other agents learning and changing their behavior is understood as a change of environment dynamics. In the present work, agents will be modeled as ILs, because modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. 
 
 In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach as Littman \cite{Littman1994} also remarks.
+
+One example of successful application of independent learners can be found on \cite{Tesauro1992}, where the author presents an automated player that uses TD($\lambda$) reinforcement learning algorithm \cite{Sutton1998} to teach itself to play backgammon. From zero knowledge in the beginning of learning, the automated player learns to play at a strong intermediate level. The automated player reaches strong master level if some prior knowledge is programmed in it. 
+
+Another example of successful application of independent learners can be found on \cite{CritesBarto1998} where the authors program each member of an elevator car controller team as an independent learner. Results show that the presented approach surpasses the best heuristic elevator control algorithms of that time.
+
+%sutton1998: R. S. Sutton, "Learning to predict by the methods of temporal differences." Machine Learning 3, 9-44 (1988).
+
 %A multiagent system can be understood as group of agents that interact with each other besides perceiving and acting in the environment they are situated. The behavior of these agents can be designed a priori. In some scenarios this is a difficult task or this pre-programmed behavior is undesired, so that the adoption of learning (or adapting) agents is a feasible alternative \cite{Busoniu+2008smc}.
 
 
