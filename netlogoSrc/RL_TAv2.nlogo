@@ -52,6 +52,8 @@ globals [
   dijkstra-distances     ;; shortest path distance from initial node to all other nodes
   dijkstra-directions    ;; which direction to head in for shortest path --> the 'previous' array
   nodes-visited          ;; total number of nodes visited by all walkers
+  
+  is-6x6?
 ]
 
 breed [ intersections intersection ]
@@ -116,11 +118,19 @@ to setup-std-scenario
   load-setup-from-file inputfile
 end
 
+to setup-6x6-scenario
+  clear-all
+  setup-network "inputs/6x6-papers.txt"
+  load-trips "300.tri"
+  set is-6x6? true
+end
+
 
 to go
   reset-road-network
   
-  while [drivers-not-arrived] [
+  ;steps until all drivers arrive or the maximum number of steps is reached
+  while [drivers-not-arrived and max [length current-route] of drivers <= 500] [
     step
   ]
   
@@ -195,13 +205,18 @@ to setup-driver [the-origin the-destination]
     
 end
 
-; creates drivers according to a trips file definition
+; prompts the user for a trips file
 ; previously created drivers are deleted
 to load-drivers-from-file
   let infile user-file
   
   ask drivers [die]
   
+  load-trips infile
+end
+
+;; creates drivers according to a trips file definition
+to load-trips [infile]
   file-open infile
   
   set od-pairs []
@@ -213,7 +228,6 @@ to load-drivers-from-file
     create-drivers num-commuters [
       setup-driver orig dest
     ]
-
   ]
   
   file-close
@@ -414,6 +428,7 @@ end
 
 ;diz se a via pertence ou nao 'a uma rota entre orig e dest
 to-report in-route [orig dest]
+  if is-6x6? [report true]
   
   let forbidden []
   
@@ -1263,7 +1278,7 @@ q-learning-alpha
 q-learning-alpha
 0
 1
-0.5
+0.30000000000000004
 .1
 1
 NIL
@@ -1455,7 +1470,7 @@ q-learning-gamma
 q-learning-gamma
 0
 1
-0.9
+0.4
 .1
 1
 NIL
@@ -1470,7 +1485,7 @@ epsilon
 epsilon
 0
 1
-0.01000000416606889
+0.47863012422672774
 .1
 1
 NIL
@@ -1783,7 +1798,7 @@ INPUTBOX
 96
 148
 num-drivers
-1001
+300
 1
 0
 Number
@@ -2814,6 +2829,62 @@ NetLogo 4.1.3
     </enumeratedValueSet>
     <enumeratedValueSet variable="one-nine">
       <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="alpha-varying-light-10times-6x6" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup-6x6-scenario</setup>
+    <go>go</go>
+    <final>setup-6x6-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <metric>mean [length current-route] of drivers</metric>
+    <metric>count drivers with [current-node != destination]</metric>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="0.4"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-alpha" first="0.1" step="0.1" last="1"/>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="reward-by">
       <value value="&quot;both&quot;"/>
