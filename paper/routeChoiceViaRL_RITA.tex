@@ -261,31 +261,37 @@ Both metrics are needed because $n$ alone does not measures how heavy are the li
 
 This abstract scenario contains 36 nodes connected by 60 links, as shown in Figure \ref{fig:6x6grid}. All links are one-way. Drivers can turn to two directions in each node. From the point of view of route choice, this is a very complex scenario as the number of possible routes between two locations is high. 
 
-In this scenario, every node is a possible origin or destination, although some nodes have bigger probability of being origins and one node has a high probability of being a destination. Table zzz shows the probabilities of nodes being origins and destinations of trips, where PO means the probability of a node be an origin and PD is the probability of the node be a destination.
+In this scenario, every node is a possible origin or destination, although some nodes have higher probability of being an origin and one node has a high probability of being a destination. Table \ref{tab:odprob} shows the origins and destinations probability distribution, where PO means the probability of the node to be an origin and PD is the probability of the node to be a destination. With this feature, the scenario includes a real-world scenario characteristic: the existance of main residential areas, where commuters depart from (nodes with higher chance of being origins) and a business center, where most commuters arrive in (the node with high chance of being a destination).
 
-{%TODO resume from here! look the 'to adapt' paper
+{%
 %\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+\begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
 Node & PO & PD \\ \hline
-E5 & x & \\ \hline
-B5 &  & x &  &  &  &  &  &  &  &  &  &  &  & \\ \hline
-C2 &  &  & x &  &  &  &  &  &  &  &  &  &  & \\ \hline
-E1 &  &  &  & x &  &  &  &  &  &  &  &  &  & \\ \hline
-Other nodes &  &  &  & x &  &  &  &  &  &  &  &  &  & \\ \hline
+E5 & 2.67\% & 60\% \\ \hline
+B5 & 3\% & 1.15\% \\ \hline
+C2 & 4\% & 1.15\% \\ \hline
+E1 & 5\% & 1.15\% \\ \hline
+Every other node & 2.67\% & 1.15\% \\ \hline
 \end{tabular}
+\caption{Origins and destinations probability distribution}\label{tab:odprob}
 \end{center}
+\end{table}
 }%
 
-Bazzan e Kluegl (2007; 2008) propõem o uso de uma rede Grade, que apesar de não
-representar nenhum cenário urbano conhecido, suas características do ponto de vista do
-roteamento (o número de rotas possíveis é grande), guardam semelhança com vários cenários
-reais. Também por este motivo, esta topologia foi escolhida para ser investigada
-nesta dissertação. A RTV possui 36 nodos ligando 60 arestas para tráfego em sentido
-único, conforme identificado pelas setas da Figura 6.15. Cada célula mede 5 metros e
-cada aresta possui 300 metros; a maioria das arestas possui apenas uma pista, comportando
-até 60 veículos. Entretanto, cinco destas arestas, assinaladas em negrito na Figura
-6.15, possuem três pistas, comportando um total de 180 veículos cada aresta. Ao todo, a
+Regarding the road network capacity, there will be two ``main streets'' with capacity of Y vehicles. The remaining links will be assigned with the capacity of Z vehicles. The main streets are the links between the nodes B3 to E3 and E3 to E4 (thicker lines on Fig. \ref{fig:6x6grid}). With this feature, the abstract 6x6 scenario becomes more realistic, as roads capacities are not homogeneous.
+
+
+% Bazzan e Kluegl (2007; 2008) propõem o uso de uma rede Grade, que apesar de não
+% representar nenhum cenário urbano conhecido, suas características do ponto de vista do
+% roteamento (o número de rotas possíveis é grande), guardam semelhança com vários cenários
+% reais. Também por este motivo, esta topologia foi escolhida para ser investigada
+% nesta dissertação. A RTV possui 36 nodos ligando 60 arestas para tráfego em sentido
+% único, conforme identificado pelas setas da Figura 6.15. Cada célula mede 5 metros e
+% cada aresta possui 300 metros; a maioria das arestas possui apenas uma pista, comportando
+% até 60 veículos. Entretanto, cinco destas arestas, assinaladas em negrito na Figura
+% 6.15, possuem três pistas, comportando um total de 180 veículos cada aresta. Ao todo, a
 
 
 \section{Results and discussion}
