@@ -159,7 +159,7 @@ On the present work, the traffic assignment problem will be modeled as a MDP wit
 
 In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (like use of real-time information or minority games) for the problem or the reinforcement-based schemes are used to try to reproduce human behavior in two-route scenarios.
 
-\section{Approach and scenario}
+\section{Proposed approach}
 \label{sec:proposal}
 
 \subsection{Reinforcement learning for route choice}
@@ -210,7 +210,31 @@ At step 2, the destination node of the chosen link is reached. At step 3, the dr
 
 Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration coefficient $\epsilon$ is decreased by the multiplicative factor $\lambda$.
 
-\subsection{Evaluation metrics}
+\section{Scenarios and metrics}
+
+Both scenarios studied in this work are typical commuting scenarios where drivers select a route from their origins to their destinations repeatedly. Drivers going from home to work in the same hour of the day during the workdays is an example of a commuting scenario.
+
+\subsection{Nine OD pairs}
+
+The abstract road network used in this scenario is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. 
+
+Link's capacities are randomly assigned in the range [130:250] prior to the simulations. The values are persisted from one simulation to another to ensure a correct comparison of different approaches. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers.
+
+\begin{figure}[ht]
+    \centerline{\includegraphics[width=8.5cm]{img/roadnetwork.png}}
+    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers, nodes with upward arrows are the origins and downward arrows represent the destinations}
+    \label{fig:roadnetwork}
+\end{figure}
+
+In this scenario, the RL for route choice approach will be compared with three different route choice methods:
+
+\begin{itemize}
+  \item Random: At each step, drivers choose one of the possible outbound links with uniform probability.
+  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path. %TODO mention selfish here
+  \item Minority Game: In this approach, drivers use the modified minority game approach proposed by \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given on Section \ref{sec:related}. For a complete description of the approach, it is suggested that readers refer to \cite{Galib&Moser2011}.
+\end{itemize}
+
+The comparison of the different route choice methods will be made on metrics regarding reasonable travel times and road network load balance.
 
 \subsubsection{Reasonable travel times:}
 In the real world, drivers have an expectation on the trip travel time on the route length, the expected number of drivers in it and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his shortest route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range $[-0,05d:0,05d]$, where $d$ is the total number of drivers on the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
@@ -233,28 +257,42 @@ From a global point of view, it is desired that vehicles get distributed proport
 
 Both metrics are needed because $n$ alone does not measures how heavy are the links congestions and $o$ does not shows how many links are overloaded. For both ($n$) and ($o$), smaller values means better performance, as less links are congested and the severity of congestions is lower.
 
-\subsection{Studied scenario} 
+\subsection{6x6 grid}
 
-The abstract road network used in the present work is the same used by \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. The network links have the same weights, representing no differences on their lengths.
+This abstract scenario contains 36 nodes connected by 60 links, as shown in Figure \ref{fig:6x6grid}. All links are one-way. Drivers can turn to two directions in each node. From the point of view of route choice, this is a very complex scenario as the number of possible routes between two locations is high. 
 
-\begin{figure}[ht]
-    \centerline{\includegraphics[width=8.5cm]{img/roadnetwork.png}}
-    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers, nodes with upward arrows are the origins and downward arrows represent the destinations}
-    \label{fig:roadnetwork}
-\end{figure}
+In this scenario, every node is a possible origin or destination, although some nodes have bigger probability of being origins and one node has a high probability of being a destination. Table zzz shows the probabilities of nodes being origins and destinations of trips, where PO means the probability of a node be an origin and PD is the probability of the node be a destination.
 
-The RL for route choice approach will be compared with three different route choice methods:
+{%TODO resume from here! look the 'to adapt' paper
+%\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+Node & PO & PD \\ \hline
+E5 & x & \\ \hline
+B5 &  & x &  &  &  &  &  &  &  &  &  &  &  & \\ \hline
+C2 &  &  & x &  &  &  &  &  &  &  &  &  &  & \\ \hline
+E1 &  &  &  & x &  &  &  &  &  &  &  &  &  & \\ \hline
+Other nodes &  &  &  & x &  &  &  &  &  &  &  &  &  & \\ \hline
+\end{tabular}
+\end{center}
+}%
 
-\begin{itemize}
-  \item Random: At each step, drivers choose one of the possible outbound links with uniform probability.
-  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path. %TODO mention selfish here
-  \item Minority Game: In this approach, drivers use the modified minority game approach proposed by \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given on Section \ref{sec:related}. For a complete description of the approach, it is suggested that readers refer to \cite{Galib&Moser2011}.
-\end{itemize}
+Bazzan e Kluegl (2007; 2008) propõem o uso de uma rede Grade, que apesar de não
+representar nenhum cenário urbano conhecido, suas características do ponto de vista do
+roteamento (o número de rotas possíveis é grande), guardam semelhança com vários cenários
+reais. Também por este motivo, esta topologia foi escolhida para ser investigada
+nesta dissertação. A RTV possui 36 nodos ligando 60 arestas para tráfego em sentido
+único, conforme identificado pelas setas da Figura 6.15. Cada célula mede 5 metros e
+cada aresta possui 300 metros; a maioria das arestas possui apenas uma pista, comportando
+até 60 veículos. Entretanto, cinco destas arestas, assinaladas em negrito na Figura
+6.15, possuem três pistas, comportando um total de 180 veículos cada aresta. Ao todo, a
+
 
 \section{Results and discussion}
 \label{sec:results}
-
+%TODO fix this!!!
 In the experiments, link's capacities were randomly assigned within the range [130:250] prior to the simulations. The values are persisted from one simulation to another to ensure a correct comparison of different algorithms. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of m = 100 learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. Then, the value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$.
+%Endfix
 
 \subsection{Influence of Q-learning parameters}
 
