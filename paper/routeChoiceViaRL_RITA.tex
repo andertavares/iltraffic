@@ -209,7 +209,7 @@ At step 2, the destination node of the chosen link is reached. At step 3, the dr
 Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearning}. Finally, at step 6, the exploration coefficient $\epsilon$ is decreased by the multiplicative factor $\lambda$.
 
 \section{Scenarios and metrics}
-
+\label{sec:scenario}
 In the present work two scenarios will be studied. Both are typical commuting scenarios where drivers select a route from their origins to their destinations repeatedly. Drivers going from home to work in the same hour of the day during the workdays is an example of a commuting scenario.
 
 The first scenario is a 6x6 grid, where the convergence and learning properties of the RL approach will be studied. Specifically, two questions are adressed:
@@ -256,8 +256,8 @@ Having the goal of assessing the learning and convergence properties of the RL a
 
 \begin{itemize}
   \item Number of aborted trips: this metric will assess how many drivers cannot find their destinations within the time limit (500 steps).
-  \item Average, maximum and minimum number of steps to reach destination: this metric will assess how many steps drivers are taking to reach their destinations. If drivers take too many steps to finish their trips, this means that they are possibly building routes with loops.
- \item Average, maximum and minimum travel time: this metric will assess how drivers' performance improve with time. More than build a route without loops, drivers need to select links with low occupancy in order to achieve better travel times from their origins to their destinations.
+  \item Trip length: this metric will assess how many steps drivers are taking to reach their destinations. If drivers take too many steps to finish their trips, this means that they are possibly building routes with loops.
+ \item Travel time: this metric will assess how drivers' performance improve with time. More than build a route without loops, drivers need to select links with low occupancy in order to achieve better travel times from their origins to their destinations.
 \end{itemize}
 
 \subsection{Nine OD pairs}
@@ -306,36 +306,63 @@ Both metrics are needed because $n$ alone does not measures how heavy are the li
 \section{Results and discussion}
 \label{sec:results}
 
-%TODO will influcence of QL be discussed before the grid scenario?!?
+The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that they can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach will be compared with the three route choice methods discussed in Section \ref{sec:scenario}.
 
-\subsection{Influence of Q-learning parameters}
 
-The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that they can be adjusted accordingly.
+\subsection{Grid scenario}
+
 %TODO do the alpha-gamma grid tests
+
+In the grid scenario, the effect of Q-learning parameters was measured in terms of the number of aborted trips, the mean trip length and mean travel time for all drivers. In each run, the metrics for all drivers are registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots.
+
 \begin{figure}[ht]
   \centering
   \subfigure[]{
-    \includegraphics[width=8cm]{img/travelTimeVsAlpha.png}
+    \includegraphics[width=4.5cm]{img/abortedTripsVsAlpha.png}
+    \label{fig:abortedTripsVsAlpha}
+  }
+  \subfigure[]{
+    \includegraphics[width=4.5cm]{img/tripLengthVsAlpha.png}
+    \label{fig:tripLengthVsAlpha}
+  }
+  \subfigure[]{
+    \includegraphics[width=4.5cm]{img/travelTimeVsAlpha-grid.png}
+    \label{fig:travelTimeVsAlpha-grid}
+  }
+  \caption{Box-and-whisker charts showing the effect $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time \subref{fig:travelTimeVsAlpha-grid} in the grid scenario.}
+  \label{fig:qLearningParams-grid}
+\end{figure}
+
+Figure 
+
+
+
+Figure \ref{fig:travelTimeVsGamma-grid} shows that the RL approach performs more robustly as $\gamma$ increases. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. For $\gamma = 1$, the smallest interquartile range and median are observed.
+
+\subsection{Nine OD pairs scenario}
+
+\subsubsection{Effect of Q-learning parameters:}
+In the nine 0D scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. In each run, the mean travel time for all drivers is registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots (Fig. \ref{fig:qLearningParams}).
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[]{
+    \includegraphics[width=5cm]{img/travelTimeVsAlpha-tiny.png}
     \label{fig:travelTimeVsAlpha}
   }
   \subfigure[]{
-    \includegraphics[width=8cm]{img/travelTimeVsGamma.png}
+    \includegraphics[width=5cm]{img/travelTimeVsGamma-tiny.png}
     \label{fig:travelTimeVsGamma}
   }
   \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time in the nine OD pair scenario. Each parameter value was tested 10 times.}
   \label{fig:qLearningParams}
 \end{figure}
 
-Figure \ref{fig:travelTimeVsAlpha} shows the effect of $\alpha$ and $\gamma$ on drivers' travel time on the nine 0D pairs scenario. The approach performs more robustly for $\alpha$ within the range of 0.4 to 0.8, as the interquartile range is small. For $\alpha = 1.0$ the interquartile range is the smallest, but the maximum outlier is too distant of the upper extreme. This can be due to the nonstationarity of the traffic scenario: if a driver disregards all the previous knowledge, the outcome of a single choice that brought bad results will be fully stored in the Q-table, so that the driver will not try it again (unless the action is tried again by exploration) even if the previous choices resulted in good outcomes. In this kind of nonstationary scenario, a high learning rate can lead to this effect.
+Figure \ref{fig:travelTimeVsAlpha} that the approach performs more robustly for $\alpha$ within the range of 0.4 to 0.8, as the interquartile range is small. For $\alpha = 1.0$ the interquartile range is the smallest, but the maximum outlier is too distant of the upper extreme. This can be due to the nonstationarity of the traffic scenario: if a driver disregards all the previous knowledge, the outcome of a single choice that brought bad results will be fully stored in the Q-table, so that the driver will not try it again (unless the action is tried again by exploration) even if the previous choices resulted in good outcomes. In this kind of nonstationary scenario, a high learning rate can lead to this effect.
 
 Figure \ref{fig:travelTimeVsGamma} shows that a decrease on travel time is observed with the increase of $\gamma$. For $\gamma = 0.9$, the smallest interquartile range and median are observed, showing that the approach performs robustly for this $\gamma$ value.
 
-For the ongoing experiments, the value of $\alpha$ and $\gamma$ will be set as $0.5$ and $0.9$, respectively.
-
-\subsection{6x6 grid scenario}
-
-
-\subsection{Nine OD pairs scenario}
+\subsubsection{Comparison with other route choice methods:}
 In this scenario, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice.
 
 Experiment paramenters are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of m = 100 learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. Then, the value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$. For the Q-learning update rule (Eq. \eqref{eq:qlearning}), $\alpha = 0.5$ and $\gamma = 0.9$.
