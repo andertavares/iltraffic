@@ -55,7 +55,7 @@
 \maketitle
 
 \begin{abstract}
-Traffic is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice made by drivers. This work presents a reinforcement learning based approach for route choice which relies solely on drivers experience to guide their decisions. There is no coordinated learning mechanism, so that driver agents are independent learners. Our approach is tested on two abstract traffic networks and it is compared to other route choice methods. Experimental results shows good performance regarding travel times and road network load balance. The simplicity, realistic assumptions and performance of the proposed approach makes it feasible of being implemented on navigation systems.
+Traffic is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice made by drivers. In general, this leads to poor global and individual performance, regarding travel times and road network load balance. This work presents a reinforcement learning based approach for route choice which relies solely on drivers experience to guide their decisions. There is no coordinated learning mechanism, so that driver agents are independent learners. Our approach is tested on two abstract traffic scenarios and it is compared to other route choice methods. Experimental results show that drivers learn routes in complex scenarios with no prior knowledge. Plus, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, good performance is achieved regarding road network load balance. The simplicity, realistic assumptions and performance of the proposed approach makes it feasible of possibly being implemented in navigation systems for guiding drivers decision regarding route choice.
 \end{abstract}
 
 
@@ -212,11 +212,11 @@ Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearn
 \label{sec:scenario}
 In the present work two scenarios will be studied. Both are typical commuting scenarios where drivers select a route from their origins to their destinations repeatedly. Drivers going from home to work in the same hour of the day during the workdays is an example of a commuting scenario.
 
-The first scenario is a 6x6 grid, where the convergence and learning properties of the RL approach will be studied. Specifically, two questions are adressed:
+The first scenario is a 6x6 grid, where two questions are adressed:
 
 \begin{enumerate}
   \item Can drivers learn the routes from origins to destinations without prior knowledge in a nonstationary scenario? As routes are not pre-computed, drivers need to learn how to depart from their origins and arrive at their destinations.
-  \item Are drivers improving their performance as the time passes? In this question, we want to assess whether the drivers are reducing their travel times as they gain experience by traveling in the road network repeatedly, that is, if they can take alternative links to a congested one in order to avoid traffic.
+  \item How sensitive is the RL for route choice approach regarding the Q-learning parameters? In this question, we want to assess the influence of the learning rate and discount rate for future rewards on overall drivers' performance.
 \end{enumerate}
 
 The second scenario has 9 possible origin-destination pairs. It is less complex than the 6x6 grid as the number of possible routes between origins and destinations is lower and it is not possible to build routes with loops as there are no returning links. In this scenario, the goal is to compare the RL approach with three methods for route choice.
@@ -250,9 +250,9 @@ Every other node & 2.67\% & 1.15\% \\ \hline
 \end{table}
 }%
 %TODO INSTANTIATE Y AND Z
-Regarding the road network capacity, there will be two ``main streets'' with capacity of Y vehicles. The remaining links will be assigned with the capacity of Z vehicles. The main streets are the links between the nodes B3 to E3 and E3 to E4 (thicker lines on Fig. \ref{fig:6x6grid}). With this feature, the abstract 6x6 scenario becomes more realistic, as roads capacities are not homogeneous.
+Regarding the road network capacity, there will be two ``main streets'' with capacity of 45 vehicles. The remaining links will be assigned with the capacity of 15 vehicles. The main streets are the links between the nodes B3 to E3 and E3 to E4 (thicker lines on Fig. \ref{fig:6x6grid}). With this feature, the abstract 6x6 scenario becomes more realistic, as roads capacities are not homogeneous.
 
-Having the goal of assessing the learning and convergence properties of the RL approach, the following metrics will be evaluated in this scenario:
+The following metrics will be evaluated in this scenario:
 
 \begin{itemize}
   \item Number of aborted trips: this metric will assess how many drivers cannot find their destinations within the time limit (500 steps).
@@ -261,7 +261,7 @@ Having the goal of assessing the learning and convergence properties of the RL a
 \end{itemize}
 
 \subsection{Nine OD pairs}
-
+\label{sec:nineODDescription}
 The abstract road network used in this scenario is the same studied in \cite{Galib&Moser2011}. It consists on 10 nodes and 24 links, as depicted in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD-pairs have uniform probability of being assigned to a driver.
 
 Link's capacities are randomly assigned in the range [130:250] prior to the simulations. The values are persisted from one simulation to another to ensure a correct comparison of different approaches. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers.
@@ -306,7 +306,7 @@ Both metrics are needed because $n$ alone does not measures how heavy are the li
 \section{Results and discussion}
 \label{sec:results}
 
-The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that they can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach will be compared with the three route choice methods discussed in Section \ref{sec:scenario}.
+The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that they can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach will be compared with the three route choice methods discussed in Section \ref{sec:nineODDescription}.
 
 
 \subsection{Grid scenario}
@@ -329,43 +329,64 @@ In the grid scenario, the effect of Q-learning parameters was measured in terms 
     \includegraphics[width=4.5cm]{img/travelTimeVsAlpha-grid.png}
     \label{fig:travelTimeVsAlpha-grid}
   }
-  \caption{Box-and-whisker charts showing the effect $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time \subref{fig:travelTimeVsAlpha-grid} in the grid scenario.}
-  \label{fig:qLearningParams-grid}
+  \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time \subref{fig:travelTimeVsAlpha-grid} in the grid scenario.}
+  \label{fig:qLearningAlpha-grid}
 \end{figure}
 
-Figure 
-
-
-
-Figure \ref{fig:travelTimeVsGamma-grid} shows that the RL approach performs more robustly as $\gamma$ increases. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. For $\gamma = 1$, the smallest interquartile range and median are observed.
-
-\subsection{Nine OD pairs scenario}
-
-\subsubsection{Effect of Q-learning parameters:}
-In the nine 0D scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. In each run, the mean travel time for all drivers is registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots (Fig. \ref{fig:qLearningParams}).
+Figure \ref{fig:qLearningAlpha-grid} shows that for high values of $\alpha$, drivers have poor performance as some of them don't manage to arrive at their destinations, rising the number of aborted trips and the mean trip length. Also, travel times are very high. This shows that in a nonstationary scenario, a high learning rate is harmful.
 
 \begin{figure}[ht]
   \centering
   \subfigure[]{
-    \includegraphics[width=5cm]{img/travelTimeVsAlpha-tiny.png}
+    \includegraphics[width=4.5cm]{img/abortedTripsVsGamma.png}
+    \label{fig:abortedTripsVsGamma}
+  }
+  \subfigure[]{
+    \includegraphics[width=4.5cm]{img/tripLengthVsGamma.png}
+    \label{fig:tripLengthVsGamma}
+  }
+  \subfigure[]{
+    \includegraphics[width=4.5cm]{img/travelTimeVsGamma-grid.png}
+    \label{fig:travelTimeVsGamma-grid}
+  }
+  \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time \subref{fig:travelTimeVsGamma-grid} in the grid scenario.}
+  \label{fig:qLearningGamma-grid}
+\end{figure}
+
+Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more robustly when $\gamma$ is high. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. This shows that, in traffic scenarios, where the next choice options depend on the current, it is relevant to take into account the outcomes of the choices ahead, otherwise the next available possibilities will result in a bad overall performance.
+
+\subsection{Nine OD pairs scenario}
+
+\subsubsection{Effect of Q-learning parameters:}
+\label{sec:qlParamsNineOD}
+In the nine 0D scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. As this scenario has no loops and the number of possible routes is smaller than in the grid scenario, there is no need to evaluate the number of aborted trips and the mean trip length.
+
+In each run, the mean travel time for all drivers was registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots (Fig. \ref{fig:qLearningParams}).
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[]{
+    \includegraphics[width=6cm]{img/travelTimeVsAlpha.png}
     \label{fig:travelTimeVsAlpha}
   }
   \subfigure[]{
-    \includegraphics[width=5cm]{img/travelTimeVsGamma-tiny.png}
+    \includegraphics[width=6cm]{img/travelTimeVsGamma.png}
     \label{fig:travelTimeVsGamma}
   }
   \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time in the nine OD pair scenario. Each parameter value was tested 10 times.}
   \label{fig:qLearningParams}
 \end{figure}
 
-Figure \ref{fig:travelTimeVsAlpha} that the approach performs more robustly for $\alpha$ within the range of 0.4 to 0.8, as the interquartile range is small. For $\alpha = 1.0$ the interquartile range is the smallest, but the maximum outlier is too distant of the upper extreme. This can be due to the nonstationarity of the traffic scenario: if a driver disregards all the previous knowledge, the outcome of a single choice that brought bad results will be fully stored in the Q-table, so that the driver will not try it again (unless the action is tried again by exploration) even if the previous choices resulted in good outcomes. In this kind of nonstationary scenario, a high learning rate can lead to this effect.
+Figure \ref{fig:travelTimeVsAlpha} that the approach performs more robustly for $\alpha$ within the range of 0.4 to 0.8, as the interquartile range is small.% For $\alpha = 1.0$ the interquartile range is the smallest, but the maximum outlier is too distant of the upper extreme. This can be due to the nonstationarity of the traffic scenario: if a driver disregards all the previous knowledge, the outcome of a single choice that brought bad results will be fully stored in the Q-table, so that the driver will not try it again (unless the action is tried again by exploration) even if the previous choices resulted in good outcomes. In this kind of nonstationary scenario, a high learning rate can lead to this effect.
 
-Figure \ref{fig:travelTimeVsGamma} shows that a decrease on travel time is observed with the increase of $\gamma$. For $\gamma = 0.9$, the smallest interquartile range and median are observed, showing that the approach performs robustly for this $\gamma$ value.
+Figure \ref{fig:travelTimeVsGamma} shows that a decrease on travel time is observed with the increase of $\gamma$. For $\gamma = 0.9$, the smallest interquartile range and median are observed.
+
+Analysing both scenarios, it is possible to see that the RL approach is less sensitive to the values of the Q-learning parameters in the nine 0D scenario, because it is much simpler than the grid in terms of the number of possible routes and the lack of returning links. 
 
 \subsubsection{Comparison with other route choice methods:}
-In this scenario, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice.
+In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice.
 
-Experiment paramenters are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of m = 100 learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. Then, the value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$. For the Q-learning update rule (Eq. \eqref{eq:qlearning}), $\alpha = 0.5$ and $\gamma = 0.9$.
+For the RL based approach, experiment paramenters are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of $m = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$. For the Q-learning update rule (Eq. \eqref{eq:qlearning}), $\alpha = 0.5$ and $\gamma = 0.9$ as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
 The AED metric for each approach is shown on Figure \ref{fig:travelTimeComparison}. 
 
@@ -375,7 +396,7 @@ The AED metric for each approach is shown on Figure \ref{fig:travelTimeCompariso
     \label{fig:travelTimeComparison}
 \end{figure}
 
-In this metric, the RL approach outperforms the others, achieving reasonable travel times in all OD Pairs. The minority game approach achieves travel times within expectation in 4 OD pairs. On the other OD pairs, the performance is still good, as actual travel times are no longer than 5 minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from 5 OD pairs experience travel times within expectation, but especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
+In this metric, the RL approach outperforms the others, achieving reasonable travel times in all OD Pairs. The minority game approach achieves travel times within expectation in 4 OD pairs. On the other OD pairs, the performance is still good, as actual travel times are no longer than 5 minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from 5 OD pairs experience travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
 
 \begin{figure}[ht]
@@ -399,21 +420,25 @@ On the defined load balance evaluation metrics, the minority game based approach
 
 In this work we modeled traffic assignment as a reinforcement learning problem and the driver agents were modeled as independent learners.
 
-Regarding the convergence and learning properties, the proposed approach showed itself sensitive to the Q-learning update rule parameters. Specially when the learning rate is lower, the learning does not converge and some drivers don't find routes to their destinations. When these parameters are properly adjusted, the learning converge and drivers improve their performance with time.
+Using the proposed approach, drivers learned the routes between their origins and destinations in the complex grid scenario. Moreover, drivers learn how to build efficient routes, as the mean trip length and travel time reach lower values for certain parameters' values. In this grid scenario, the proposed approach showed itself sensitive to the Q-learning update rule parameters. 
+
+Specially when the learning rate is high, the learning does not converge and several drivers don't find routes to their destinations. Also, the discount rate for future rewards must be high, otherwise drivers will not regards the future consequences of the current choice, leading to bad options in the next steps.
 
 In the nine OD pairs scenario, our reinforcement learning for route choice approach was helpful in either individual and global point of view, as drivers achieve reasonable travel times (within expectation) on average, and traffic is distributed over the network, as links does not get heavily congested.
 
-Comparing the RL approach with other route choice methods..... %TODOOOO
+The RL approach outperformed the other route choice methods regarding drivers' experienced travel time. On average, drivers from all OD pairs achieved reasonable travel times and no other method achieved this.
+
+%In terms of load distribution over the road network, the proposed RL approach was slightly outperformed by the minority game based approach proposed by \cite{Galib&Moser2011}. 
 
 The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time), dismissing the use of real-time information and historic data of links. This makes our approach an attractive and feasible alternative to be used on existing navigation systems, as no new technologies are required.
 
-Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to assess how good it would be for agents when they consider other agents, that is, how good it would be to learn joint actions in this competitive environment.
+Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms for this transportation domain.
 
 \section{Acknowledgments}
 
 Authors would like to thank Mr. Syed Galib for clarifying questions on the minority game for route choice approach \cite{Galib&Moser2011} and for providing data for comparison. Both authors are partially supported by CNPq and FAPERGS. %The authors also would like to thank the anonymous reviewers for their suggestions of paper improvements.
 
-\bibliographystyle{splncs03}
+\bibliographystyle{plain}
 \bibliography{references,stringDefs,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
 
 \end{document}
