@@ -1278,7 +1278,7 @@ q-learning-alpha
 q-learning-alpha
 0
 1
-0.5
+1
 .1
 1
 NIL
@@ -2915,6 +2915,62 @@ NetLogo 4.1.3
     <enumeratedValueSet variable="q-learning-alpha">
       <value value="0.5"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-capacity">
+      <value value="130"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="epsilon">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="tt-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inst-road-view?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-alpha">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-episodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="travel-time-beta">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="cap-randomness">
+      <value value="120"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="reward-by">
+      <value value="&quot;both&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="alpha-varying-light-10times-6x6-gamma1" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup-6x6-scenario</setup>
+    <go>go</go>
+    <final>setup-6x6-scenario</final>
+    <timeLimit steps="100"/>
+    <metric>avg-travel-time</metric>
+    <metric>avg-occ-dev</metric>
+    <metric>mean [length current-route] of drivers</metric>
+    <metric>count drivers with [current-node != destination]</metric>
+    <enumeratedValueSet variable="decay">
+      <value value="0.95499259"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="q-learning-gamma">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="plot-capacity?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="num-drivers">
+      <value value="1001"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="avg?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="q-learning-alpha" first="0.1" step="0.1" last="1"/>
     <enumeratedValueSet variable="roads-capacity">
       <value value="130"/>
     </enumeratedValueSet>
