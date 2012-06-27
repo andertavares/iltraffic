@@ -1,32 +1,5 @@
 \documentclass{RITA}
-\usepackage{graphicx,url}
-\usepackage{subfigure}
-%\usepackage[brazil]{babel}   
-\usepackage[latin1]{inputenc}  
-\usepackage{amsfonts}
-\usepackage{amsmath}
-
-\author{
-  Anderson Rocha Tavares\footnote{Instituto de Inform\'atica, UFRGS, Caixa Postal~15064\\
-  \texttt{\{artavares,bazzan@inf.ufrgs.br\}}}
-  \and Ana Lucia Cetertich Bazzan\footnotemark[1]
-}
-
-\title{Independent learners in abstract traffic scenarios}
-
-\RITAvolume{XIX}
-\RITAnumber{1}
-\RITAyear{2012}
-\usepackage{graphicx,url}
-
-%\usepackage[brazil]{babel}   
-\usepackage[latin1]{inputenc}  
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{subfigure}
-%\usepackage{algpseudocode}
-%\usepackage{algorithm}
-     
+\usepackage{amssymb,amsfonts,mathtools,subfigure,url,times,graphicx,pslatex,multicol,footmisc,cite}
 
 % Equation terms definition
 \newcommand{\route}[1]{\ensuremath{P_#1}}	%route for driver 'i'
@@ -48,7 +21,21 @@
 \newcommand{\numCong}{\ensuremath{n}}		%number of congested roads
 \newcommand{\overLoadFactor}{\ensuremath{o}}	%overload factor - measures severity of congestions
 
-\hyphenation{se-ve-ral}
+
+\title{Independent learners in abstract traffic scenarios}
+
+\author{
+  Anderson Rocha Tavares\footnote{Instituto de Inform\'atica, UFRGS, Caixa Postal~15064\\
+  \texttt{\{artavares,bazzan@inf.ufrgs.br\}}}
+  \and Ana Lucia Cetertich Bazzan\footnotemark[1]
+}
+
+\RITAvolume{?}
+\RITAnumber{?}
+\RITAyear{201?}
+     
+
+\hyphenation{se-ve-ral lear-ning}
 
 \begin{document}
 
@@ -60,7 +47,9 @@ There is no coordinated learning mechanism, thus driver agents are independent l
 Experimental results show that drivers learn routes in complex scenarios with no prior knowledge. Plus, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, satisfactory performance is achieved regarding road network load balance. 
 The simplicity, realistic assumptions and performance of the proposed approach suggests that it is a feasible candidate for implementation in navigation systems for guiding drivers decision regarding route choice.
 \end{abstract}
-
+% \index{annotation pipeline}
+% \index{\emph{A. thaliana}}
+% \index{Keywords in swissprot}
 
 %\category{I.2.11}{Artificial Intelligence}{Distributed Artificial Intelligence}[Multiagent Systems]
 
@@ -74,22 +63,21 @@ The simplicity, realistic assumptions and performance of the proposed approach s
 Traffic and mobility present challenging issues to authorities, traffic engineers and researchers. To deal with the increasing traffic demand, techniques and methods to optimize the existing road traffic network are attractive since they do not include expensive and environmental-impacting changes on the infrastructure.
 
 In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within that expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles get distributed on the road network proportionally to the capacity of each road. In a commuting scenario, drivers strive to minimize their travel times. At the same time, there is a global cost function that rates the whole system's behavior, like distribution of vehicles in proportion to the capacity of each road. Multiagent systems such as this commuting scenario are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown by Tumer and Wolpert \cite{Tumer&Wolpert2004}.
-%TODO correct the traffic assignment definition
-Traffic assignment deals with route choice between origin-destination pairs in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem so that agents make decisions using only their own experience, which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the ones available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic concepts about traffic engineering, single and multiagent reinforcement learning that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach that is tested in the scenarios described in Section \ref{sec:scenario}. Results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
+Traffic assignment concerns the allocation of a given set of drivers satisfying the demand between origins and destinations to specific routes in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem so that agents make decisions using only their own experience, which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the ones available for each driver.
+
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic concepts about traffic network modeling, single and multiagent reinforcement learning that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach that is tested in the scenarios described in Section \ref{sec:scenario}. Results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
 
 \section{Background}
 \label{sec:concepts}
-\subsection{Commuting and traffic flow}
+\subsection{Traffic network modeling and travel time}
 
-A road network can be modeled as a graph, where there is a set of nodes, which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or length.
+A road network can be modeled as a graph, with a set of nodes which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or length. 
 
-A subset of the nodes contains the origins of the road network, where drivers start their trips, while another subset represents the destinations. A driver's trip consists on a set of links, forming a route between his origin and destination (OD pair) among the available routes. A commuting scenario consists on repeated trips, such as drivers going from home to work in the same hour of the day during the workdays.
+The road network contains origins and destinations that are subsets of the set of nodes. A driver's trip consists on a set of links, forming a route between his origin and destination nodes (OD pair) among the available routes. A commuting scenario consists on repeated trips, such as drivers going from home to work in the same hour of the day during the workdays.
 
-Traffic flow is defined by the number of entities that use a network link in a given period of time. Capacity is understood as the number of traffic units that a link supports in a given instant of time. Load is understood as the demand generated on a link at a given moment. When demand reaches the link's maximum capacity, congestion is formed.
-
-Traffic assignment methods that consider congestion effects in urban settings need a suitable cost function that relates link's attributes (capacity, free-flow travel time) and traffic flow on the entire road network. However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism. One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite{Ortuzar&Willumsen2001}.
+Drivers travelling through the road network generate traffic flow. Traffic assignment methods need a suitable cost function that relates traffic flow and link's attributes (capacity, free-flow travel time).% However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism.
+One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite{Ortuzar&Willumsen2001}.
 
 \begin{equation}
 \label{eq:tt}
@@ -122,7 +110,7 @@ Traffic scenarios are associated with the class of non-cooperative multi-agent s
 
 For an independent learner agent, the other agents learning and changing their behavior is understood as a change of environment dynamics. In the present work, agents will be modeled as ILs, because modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. 
 
-In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach \cite{Littman1994}.
+In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible, as Bazzan \cite{Bazzan2009} remarks. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach \cite{Littman1994}.
 
 One example of successful application of independent learners can be found on \cite{Tesauro1994}, where the author presents an automated player that uses the TD($\lambda$) reinforcement learning algorithm \cite{Sutton1988} to teach itself to play backgammon. From zero knowledge in the beginning of learning, the automated player learns to play at a strong intermediate level. The automated player reaches strong master level if some prior knowledge is programmed in it. 
 
@@ -141,12 +129,12 @@ Another example of successful application of independent learners can be found i
 
 %With this process, a Pareto-efficient distribution or the Wardrop's equilibrium \cite{Wardrop1952} may be reached. In this condition, no agent can reduce its costs by switching routes without rising costs for other agents. 
 
-Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004}. The former analyses the effect of different minority game strategies for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
+Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004jasss}. The former analyses the effect of different strategies for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
 
 This kind of complex scenario was investigated by Bazzan and Kl\"ugl \cite{Bazzan&Kluegl2008}, where the effect of real time information on drivers' route replanning is assessed. The work includes studies with adaptive traffic lights. In the most successful en-route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
 %More recently, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for use in a complex scenario with several available routes. 
-The problem of traffic assignment can also be tackled by an evolutionary game called minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
+The problem of traffic assignment can also be tackled by the evolutionary version of the minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
 
 The minority game consists of an odd number of player agents that must choose between two options at each round. Agents on the minority side receive one point. The only information available for agents is the history of winning options. Each agent has a set of strategies that predicts the next winning option given the history. Agents score each strategy according to the number of times it went correct and they use the best strategy to make the prediction for the next round.
 
@@ -154,9 +142,9 @@ Regarding the traffic assignment problem, the minority game can only be used in 
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
-Learning-based models for route choice are studied in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors present a reinforcement algorithm and in the latter, a reinforcement-based model of route-choice behavior with availability of real-time information is presented. Both works try to reproduce human decision-making in corresponding experimental studies, based on two-route scenarios. The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes.
+Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors instantiate the minority game to test human behavior. In the experiments, human subjects must choose repeatedly between two routes.  In the latter, real-time traffic information is given to human subjects and they must choose between two routes. The authors conclude that both experience and information play a role in the choices made by the subjects. In both works, the authors present a reinforcement based models for estimation of human behaviour in the experiences.
 
-A reinforcement learning based approach for route choice can be found in \cite{Tavares&Bazzan2012}. The authors model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and good results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes. Such approach can be found in \cite{Tavares&Bazzan2012}. The authors model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
 
 In the present work, the traffic assignment problem will be modeled as a MDP with states and the reward function is simplified taking into account only the travel time in the chosen link. Also, in relation to \cite{Tavares&Bazzan2012}, new metrics for road congestion evaluation are proposed and the RL-based approach is compared with more route selection strategies. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
 
@@ -377,7 +365,7 @@ Figure \ref{fig:qLearningAlpha-grid} shows that for high values of $\alpha$, dri
   \label{fig:qLearningGamma-grid}
 \end{figure}
 
-Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more robustly when $\gamma$ is high. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. This shows that, in traffic scenarios, where the next choice options depend on the current, it is relevant to take into account the outcomes of the choices ahead, otherwise the next available possibilities will result in a bad overall performance.
+Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more robustly when $\gamma$ is high. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. This shows that, in traffic scenarios, where the next choice options depend on the current, it is relevant to take into account the outcomes of the subsequent choices, otherwise the next available possibilities will result in a bad overall performance.
 
 \subsection{Nine OD pairs scenario}
 
@@ -460,11 +448,11 @@ The proposed approach has the advantage of making realistic assumptions as it on
 
 Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms for this transportation domain.
 
-\section{Acknowledgments}
+\section*{Acknowledgments}
 
 Authors would like to thank Mr. Syed Galib for clarifying questions on the minority game for route choice approach and for providing data for comparison. Both authors are partially supported by CNPq and FAPERGS. %The authors also would like to thank the anonymous reviewers for their suggestions of paper improvements.
 
 \bibliographystyle{plain}
-\bibliography{references,stringDefs,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
+\bibliography{references,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
 
 \end{document}
