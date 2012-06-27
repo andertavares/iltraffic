@@ -32,10 +32,10 @@
 
 \RITAvolume{?}
 \RITAnumber{?}
-\RITAyear{201?}
+\RITAyear{2012}
      
 
-\hyphenation{se-ve-ral lear-ning}
+\hyphenation{sev-er-ral learn-ing meth-ods be-hav-ior a-vail-a-ble pa-ram-e-ters dif-fer-ent}
 
 \begin{document}
 
@@ -66,17 +66,17 @@ In a commuting scenario, it is reasonable to assume that drivers choose their ro
 
 Traffic assignment concerns the allocation of a given set of drivers satisfying the demand between origins and destinations to specific routes in transportation networks. In this work, traffic assignment will be modeled as a reinforcement learning problem so that agents make decisions using only their own experience, which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the ones available for each driver.
 
-The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic concepts about traffic network modeling, single and multiagent reinforcement learning that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning for route choice approach that is tested in the scenarios described in Section \ref{sec:scenario}. Results are discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
+The remainder of this document is organized as follows: Section \ref{sec:concepts} presents basic concepts about traffic network modeling, single and multiagent reinforcement learning that will be used throughout this paper. Section \ref{sec:related} presents and discusses related works. Section \ref{sec:proposal} presents the reinforcement learning approach for route choice that is tested in the scenarios described in Section \ref{sec:scenario}. Results are presented and discussed in Section \ref{sec:results}. Finally, Section \ref{sec:conclusions} concludes the paper and presents opportunities for further investigation.
 
 \section{Background}
 \label{sec:concepts}
-\subsection{Traffic network modeling and travel time}
+\subsection{Road traffic network modeling}
 
 A road network can be modeled as a graph, with a set of nodes which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or length. 
 
 The road network contains origins and destinations that are subsets of the set of nodes. A driver's trip consists on a set of links, forming a route between his origin and destination nodes (OD pair) among the available routes. A commuting scenario consists on repeated trips, such as drivers going from home to work in the same hour of the day during the workdays.
 
-Drivers travelling through the road network generate traffic flow. Traffic assignment methods need a suitable cost function that relates traffic flow and link's attributes (capacity, free-flow travel time).% However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism.
+Drivers travelling through the road network generate traffic flow. Traffic assignment methods need a suitable cost function that relates traffic flow and link's attributes (capacity, free-flow travel time). % However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism.
 One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite{Ortuzar&Willumsen2001}.
 
 \begin{equation}
@@ -84,13 +84,13 @@ One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite
 \travTime(\veh) = \fftt[1 + \tau \left(\frac{\veh}{\linkCap}\right)^\beta]
 \end{equation}
 
-In this function, $\travTime$ is the travel time on link $j$, $\linkCap$ is the link's capacity, $\fftt$ is the free-flow travel time on link $j$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
+In this function, $\travTime$ is the travel time on link $j$, $\linkCap$ is the link's capacity, $\veh$ is the number of vehicles in it, $\fftt$ is the free-flow travel time on link $j$ and $\tau$ and $\beta$ are calibration parameters. This will be the travel time function used throughout the present work.
 
 \subsection{Reinforcement Learning}
 \label{sec:rl}
-Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interacting with the environment. Usually, a reinforcement learning problem is modeled as a Markov decision process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over S) and a reward function $(R: S \times A \to \mathbb{R})$. %$T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
+Reinforcement learning (RL) deals with the problem of making an agent learn a behavior by interacting with the environment. Usually, a reinforcement learning problem is modeled as a Markov decision process (MDP), which consists of a discrete set of environment states $(S)$, a discrete set of actions $(A)$, a state transition function ($T: S \times A \to \Pi(S))$, where $\Pi(S)$ is a probability distribution over $S$ and a reward function $(R: S \times A \to \mathbb{R})$. %$T(s, a, s')$ means the probability to go from state $s$ to $s'$ after performing action $a$ in $s$.
 
-The agent interacts with the environment following a policy $\pi$ and tries to learn the optimal policy $\pi^*$ that maps the current environment state $s \in S$ to an action $a \in A$ in a way that the future reward is maximized. At each state, the agent must select an action $a$ according to a strategy that balances exploration (gain of knowledge) and exploitation (use of knowledge). One of the strategies is $\epsilon$-greedy, that consists on choosing a random action (exploration) with probability $\epsilon$ or choosing the best action (exploitation) with probability $1 - \epsilon$. In the beginning, $\epsilon$ starts with a high value (high exploration) and decreases with time, leading to high exploitation in the end.
+The agent interacts with the environment following a policy $\pi$ and tries to learn the optimal policy $\pi^*$ that maps the current environment state $s \in S$ to an action $a \in A$ in a way that the future reward is maximized. At each state, the agent must select an action $a$ according to a strategy that balances exploration (gain of knowledge) and exploitation (use of knowledge). One possible strategy is $\epsilon$-greedy, that consists on choosing a random action (exploration) with probability $\epsilon$ or choosing the best action (exploitation) with probability $1 - \epsilon$. In the beginning, $\epsilon$ starts with a high value (high exploration) and decreases with time, leading to high exploitation in the end.
 
 Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Watkins&Dayan1992}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha$ is the learning rate and $\gamma$ is the discount factor. $Q(s,a)$ is an entry indexed by state $s$ and action $a$ in the Q-table, which stores the values (called Q-values) of state-action pairs. The Q-value is the expected discounted reward for executing action $a$ at
 state $s$ and following the policy $\pi$ thereafter.
@@ -106,7 +106,7 @@ For a complete description of Q-learning, the reader may refer to \cite{Watkins&
 %For the next sections it will be assumed that the reader is familiar with Q-learning. For more information about Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \subsection{Independent learners} 
-Traffic scenarios are associated with the class of non-cooperative multi-agent systems, as there are several agents interacting with the environment and sometimes coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) can be divided in two classes: independent learners (ILs), in which agents ignore the existance of other agents, and joint action learners (JALs), in which agents learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. 
+Traffic scenarios are associated with the class of non-cooperative multi-agent systems, as there are several agents interacting with the environment and sometimes coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) can be divided in two classes: independent learners (ILs), in which agents ignore the existence of other agents, and joint action learners (JALs), in which agents learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. 
 
 For an independent learner agent, the other agents learning and changing their behavior is understood as a change of environment dynamics. In the present work, agents will be modeled as ILs, because modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. 
 
@@ -129,33 +129,33 @@ Another example of successful application of independent learners can be found i
 
 %With this process, a Pareto-efficient distribution or the Wardrop's equilibrium \cite{Wardrop1952} may be reached. In this condition, no agent can reduce its costs by switching routes without rising costs for other agents. 
 
-Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004jasss}. The former analyses the effect of different strategies for binary route choice. The latter includes a forecast phase for letting agents know the decision of the others and then let they change their original decision or not. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
+Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004jasss}. The former analyses the effect of different strategies for binary route choice. The latter presents a model where commuters behavior is based on evolving heuristics and also performs experiments regarding route choice with a forecast: a traffic control system perceives drivers' decisions and returns a forecast. Then drivers have to decide the actual route selection. Each one of these works assessed relevant aspects of agents decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
 
-This kind of complex scenario was investigated by Bazzan and Kl\"ugl \cite{Bazzan&Kluegl2008}, where the effect of real time information on drivers' route replanning is assessed. The work includes studies with adaptive traffic lights. In the most successful en-route replanning strategy presented on that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
+This kind of complex scenario was investigated by Bazzan and Kl\"ugl \cite{Bazzan&Kluegl2008}, where the effect of real time information on drivers' route replanning is assessed. The work includes studies with adaptive traffic lights. In the most successful en-route replanning strategy presented in that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
 %More recently, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for use in a complex scenario with several available routes. 
 The problem of traffic assignment can also be tackled by the evolutionary version of the minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
 
 The minority game consists of an odd number of player agents that must choose between two options at each round. Agents on the minority side receive one point. The only information available for agents is the history of winning options. Each agent has a set of strategies that predicts the next winning option given the history. Agents score each strategy according to the number of times it went correct and they use the best strategy to make the prediction for the next round.
 
-Regarding the traffic assignment problem, the minority game can only be used in two-route choice scenarios as it is a two-alternative game. To overcome this limitation, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for a complex scenario with several available routes. In this modified version, agents' strategies predict a road's occupancy given the occupancy history on the past trips. Using the proposed approach, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The proposed approach uses historic data of the load of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The approach proposed on the present work will be compared with the modified minority game. 
+Regarding traffic assignment, the minority game can only be used in two-route choice scenarios as it is a two-alternative game. To overcome this limitation, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for a complex scenario with several available routes. In this modified version, agents' strategies predict a road's occupancy given the occupancy history on the past trips. Using the proposed approach, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The proposed approach uses historic data of the load of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historic information of all links on the network is unrealistic. The approach proposed on the present work will be compared with the modified minority game. 
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
-Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former, the authors instantiate the minority game to test human behavior. In the experiments, human subjects must choose repeatedly between two routes.  In the latter, real-time traffic information is given to human subjects and they must choose between two routes. The authors conclude that both experience and information play a role in the choices made by the subjects. In both works, the authors present a reinforcement based models for estimation of human behaviour in the experiences.
+Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former work, the authors test human behavior on the minority game. In the experiments, human subjects must choose repeatedly between two routes.  In the latter work, real-time traffic information is given to human subjects and they must choose between two routes. The authors conclude that both experience and information play a role in the choices made by the subjects. the authors  in the experiences.
 
-The works are focused on reproducing human decision-making rather than proposing a new approach for improving the route choice process in a scenario with several available routes. Such approach can be found in \cite{Tavares&Bazzan2012}. The authors model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+Both works are focused on presenting reinforcement based models for human behavior estimation rather than proposing a new approach for improving the route choice process in a scenario with several available routes. Such approach can be found in \cite{Tavares&Bazzan2012}, where authors model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes into account the whole route travel time. The authors assess the performance of their approach in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
 
-In the present work, the traffic assignment problem will be modeled as a MDP with states and the reward function is simplified taking into account only the travel time in the chosen link. Also, in relation to \cite{Tavares&Bazzan2012}, new metrics for road congestion evaluation are proposed and the RL-based approach is compared with more route selection strategies. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
+In the present work, the traffic assignment problem will be modeled as a MDP with states and the reward function is simplified taking into account only the travel time in the chosen link. Also, in relation to \cite{Tavares&Bazzan2012}, new metrics for road congestion evaluation are proposed and the RL-based approach is compared with more route choice strategies. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
 
-In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (like use of real-time information or minority games) for the problem or the reinforcement-based schemes are used to try to reproduce human behavior in two-route scenarios.
+In the literature review performed for the present work, a reinforcement learning based approach for the route choice process with arbitrary number of routes was found only in \cite{Tavares&Bazzan2012}. In other works, either researchers present other approaches (like use of real-time information or minority games) for the problem, or the reinforcement based schemes are used to try to reproduce human behavior in two-route scenarios.
 
 \section{Proposed approach}
 \label{sec:proposal}
 
 \subsection{Reinforcement learning for route choice}
 
-The MDP model (as seen in Section \ref{sec:rl}) for this problem is as follows: the states are the nodes of the  network in which a given agent is in. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for an agent to choose, as it depends on which node of the network it is and whether the link belongs to a possible route to the agent's destination. The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function given in Eq. \eqref{eq:tt} applied to the number of vehicles ($\veh$) on the link $j$.
+The MDP model (as seen in Section \ref{sec:rl}) for this problem is as follows: the states are the nodes of the  network in which a given agent is in. The set of actions comprises the selection of the outbound links from the nodes of the network. Not every link will be available for an agent to choose, as it depends on which node of the network it is and whether the link belongs to a possible route to the agent's destination. The reward function is given by Eq. \eqref{eq:reward}, where $\travTime$ is the travel time function given in Eq. \eqref{eq:tt} applied to the number of vehicles ($\veh$) on link $j$.
 
 \begin{equation}
 \label{eq:reward}
@@ -169,7 +169,7 @@ The reward decreases as travel time increases, thus drivers will strive to minim
 Each learning episode is a trip that drivers do departing from their origins and arriving at their destinations.
 
 \subsubsection{Initialization:}
-At the beginning of the execution, OD pairs are randomly assigned to each driver. Then, each driver calculates the shortest route $P_i^*$ for his OD pair. In this phase, the shortest route is considered as the one with less links between origin and destination. The desired initial and final values for the drivers' exploration coefficient ($\epsilon_0$ and $\epsilon_f$, respectively) are assigned and $\epsilon$ receives $\epsilon_0$. The value of $\epsilon_0$ must be high (close to 1) and $\epsilon_f$ must be small so that drivers will initially explore to gain knowledge about the road network and exploit it in the final episodes.
+At the beginning of the execution, OD pairs are randomly assigned to each driver. The desired initial and final values for the drivers' exploration coefficient ($\epsilon_0$ and $\epsilon_f$, respectively) are assigned and $\epsilon$ receives $\epsilon_0$. The value of $\epsilon_0$ must be high (close to 1) and $\epsilon_f$ must be small so that drivers will initially explore to gain knowledge about the road network and exploit it in the final episodes.
 
 Also, the value of the multiplicative factor (0 $< \lambda <$ 1) that decreases $\epsilon$ at the end of each episode is calculated via Eq. \eqref{eq:lambda}, where $m$ is the number of learning episodes.
 
@@ -190,7 +190,7 @@ In each episode, each driver follows the steps shown in Figure \ref{fig:flowchar
 
 At episode start, all drivers are placed in their origins. At step 1, the driver chooses an outbound link to traverse according to the $\epsilon$-greedy action selection strategy (random action with probability $\epsilon$, best known action with probability $1 - \epsilon$). %TODO increment the road's num-drv
 
-At step 2, the destination node of the chosen link is reached. At step 3, the driver tests whether the node reached is its final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculates its travel time $\att{i}$ experienced on its route $\route{i}$, given by Eq. \eqref{eq:att}. In this equation, $\travTime$ is the travel time function (Eq. \eqref{eq:tt}) applied to the number of vehicles on link $j$ ($\veh_j$).
+At step 2, the destination node of the chosen link is reached. At step 3, the driver tests whether the node reached is its final destination. If so, the trip ends, otherwise steps 1 to 3 are repeated. At step 4, each driver $i$ calculates its travel time $\att{i}$ experienced on its route $\route{i}$, given by Eq. \eqref{eq:att}. In this equation, $\travTime$ is the travel time function given in Eq. \eqref{eq:tt} applied to the number of vehicles on link $j$ ($\veh_j$).
 
 \begin{equation}
 \label{eq:att}
@@ -201,14 +201,14 @@ Then, at step 5, drivers update their Q-tables according to Eq. \eqref{eq:qlearn
 
 \section{Scenarios and evaluation}
 \label{sec:scenario}
-In the present work two scenarios are studied. The first scenario is a 6x6 grid (Fig. \ref{fig:6x6grid}), already investigated in \cite{Bazzan+2007alamas,Bazzan+2007alag,Bazzan+2008alamas} in which no RL mechanism was employed. In the present work, two questions are addressed in the 6x6 grid scenario:
+In the present work, two scenarios are studied. The first scenario is a 6x6 grid (Fig. \ref{fig:6x6grid}), already investigated in \cite{Bazzan+2007alag,Bazzan+2008alamas} in which no RL mechanism was employed. In the present work, two questions are addressed in the 6x6 grid scenario:
 
 \begin{enumerate}
   \item Can drivers learn the routes from origins to destinations without prior knowledge in a nonstationary scenario? As routes are not pre-computed, drivers need to learn how to depart from their origins and arrive at their destinations.
   \item How sensitive is the RL approach for route choice regarding the Q-learning parameters? In this question, we want to assess the influence of the learning rate and the discount rate for future rewards on overall drivers' performance.
 \end{enumerate}
 
-The second scenario (Fig. \ref{fig:roadnetwork}) has 9 possible origin-destination pairs. It is less complex than the 6x6 grid as the number of possible routes between origins and destinations is lower and it is not possible to build routes with loops as there are no returning links. This scenario was already studied in \cite{Tavares&Bazzan2012,Galib&Moser2011}. In the present work, the goal is to compare the RL approach with three methods for route choice in the nine OD pairs scenario.
+The second scenario (Fig. \ref{fig:roadnetwork}) has nine possible origin-destination pairs. It is less complex than the 6x6 grid as the number of possible routes between origins and destinations is lower and it is not possible to build routes with loops as there are no returning links. This scenario was already studied in \cite{Tavares&Bazzan2012,Galib&Moser2011}. The present work will compare the RL approach against three methods for route choice in the nine OD pairs scenario.
 
 \subsection{6x6 grid}
 
@@ -220,7 +220,7 @@ This abstract scenario contains 36 nodes connected by 60 links, as shown in Figu
     \label{fig:6x6grid}
 \end{figure} 
 
-The scenario settings are the same as in \cite{Bazzan+2008alamas}: every node is a possible origin or destination, although some nodes have higher probability of being an origin and one node has a high probability of being a destination. Table \ref{tab:odprob} shows the origins and destinations probability distribution, where PO means the probability of the node be an origin and PD is the probability of the node be a destination. With this feature, the scenario includes a real-world scenario characteristic: the existence of main residential areas, where commuters depart from (nodes with higher chance of being origins) and a business center, where most commuters travel to (the node with high chance of being a destination).
+The scenario settings are the same as in \cite{Bazzan+2008alamas}: every node is a possible origin or destination, although some nodes have higher probability of being an origin and one node has a high probability of being a destination. Table \ref{tab:odprob} shows the origins and destinations probability distribution, where PO means the probability of the node be an origin and PD is the probability of the node be a destination. With this feature, the scenario includes a real-world characteristic: the existence of main residential areas, where commuters depart from (nodes with higher chance of being origins) and a business center, where most commuters travel to (the node with high chance of being a destination).
 
 {%
 %\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
@@ -251,7 +251,7 @@ The following metrics will be evaluated in this scenario:
 
 \subsection{Nine OD pairs}
 \label{sec:nineODDescription}
-The abstract road network used in this scenario consists on 10 nodes and 24 links, as shown in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD-pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
+The abstract road network used in this scenario consists on 10 nodes and 24 links, as shown in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
 
 % {%
 % \begin{table}[ht]
@@ -286,21 +286,21 @@ In this scenario, the RL for route choice approach will be compared with three d
 \begin{itemize}
   \item Random: At each step, drivers choose one of the possible outbound links with uniform probability.
   \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path. %TODO mention selfish here
-  \item Minority Game: In this approach, drivers use the modified minority game approach proposed by \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description of the approach, it is suggested that readers refer to \cite{Galib&Moser2011}.
+  \item Minority Game: Drivers use the modified minority game approach proposed by \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description, it is suggested that readers refer to \cite{Galib&Moser2011}.
 \end{itemize}
 
 The comparison of the different route choice methods will be made on metrics regarding reasonable travel times and road network load balance.
 
 \subsubsection{Reasonable travel times:}
 \label{sec:ttMetric}
-In the real world, drivers have an expectation on the trip travel time, the expected load and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his shortest route \optRoute{i} is given by Eq. \eqref{eq:ett}, where $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range $[-0,05d:0,05d]$, where $d$ is the total number of drivers in the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
+In the real world, drivers have an expectation on the trip travel time, the expected load and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{i}$ on his shortest route \optRoute{i} is given by Eq. \eqref{eq:ett}. In this equation, $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh$). This estimation is given by the number of vehicles in driver $i$ OD pair, plus a random number in the range $[-0,05d:0,05d]$, where $d$ is the total number of drivers in the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
 
 \begin{equation}
 \label{eq:ett}
 \ett{i} = \sum_{j \in \optRoute{i}}\travTime(\expVeh)
 \end{equation}
 
-In order to assess how reasonable the travel time obtained by drivers are, a metric called AED (\underline{a}ctual and \underline{e}xpected travel time \underline{d}ifference) was created. It is given by the difference between actual and expected travel times of each driver. It will be measured in terms of the mean and standard deviation of this difference for all drivers in a given OD pair. The mean will assess whether drivers are arriving at destination within their expectations, on average, and this happens when the metric reaches negative values (actual travel time is lower than expected). The standard deviation will evaluate whether there is a big difference between drivers' AED on the same OD pair, assessing the fairness of the route choice method.
+In order to assess how reasonable the travel time obtained by drivers are, a metric called AED (\underline{a}ctual and \underline{e}xpected travel time \underline{d}ifference) was created. It is given by the average difference between actual and expected travel times of drivers in each OD pair. For this metric, negative values are preferred as this means that drivers are having lower travel times than expected. %It will be measured in terms of the mean and standard deviation of this difference for all drivers in a given OD pair. The mean will assess whether drivers are arriving at destination within their expectations, on average, and this happens when the metric reaches negative values (actual travel time is lower than expected). The standard deviation will evaluate whether there is a big difference between drivers' AED on the same OD pair, assessing the fairness of the route choice method.
 
 \subsubsection{Road network load balance:}
 \label{sec:loadBalanceMetrics}
@@ -311,19 +311,21 @@ From a global point of view, it is desired that vehicles get distributed proport
 \numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{\substack{j \in \congRoads}} \left(\frac{\veh_j}{\linkCap} -1 \right)}{|C|}
 \end{equation}
 
-Both metrics are needed because $n$ alone does not measures how heavily the links are congested, while $o$ does not show how many links are overloaded. For both ($n$) and ($o$), smaller values are preferred, as less links are congested and the severity of congestions is lower.
+Both metrics are needed because $n$ alone does not measure how heavily the links are congested, while $o$ does not show how many links are overloaded. For both ($n$) and ($o$), smaller values are preferred, as less links are congested and the severity of congestions is lower.
 
 \section{Results and discussion}
 \label{sec:results}
 
-The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that they can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach will be compared with the three route choice methods discussed in Section \ref{sec:nineODDescription}.
+The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that these parameters can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach will be compared with the three route choice methods discussed in Section \ref{sec:nineODDescription}.
+
+Experiment parameters' values are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of $m = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$.
 
 
-\subsection{Grid scenario}
+\subsection{Q-learning parameters in grid scenario}
 
 %TODO do the alpha-gamma grid tests
 
-In the grid scenario, the effect of Q-learning parameters was measured in terms of the number of aborted trips, the mean trip length and mean travel time for all drivers. In each run, these values over the trips of all drivers are registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots.
+In the grid scenario, the effect of Q-learning parameters was measured in terms of the number of aborted trips, the mean trip length and mean travel time for all drivers. In each run, these values were registered and averaged over the last 10 episodes. Each run consists of 100 learning episodes. For each parameter, 10 runs were executed  to generate the plots.
 
 For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-varying tests, $\alpha$ was set as $0.5$.
 
@@ -358,7 +360,7 @@ Figure \ref{fig:qLearningAlpha-grid} shows that for high values of $\alpha$, dri
     \label{fig:tripLengthVsGamma}
   }
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/travelTimeVsGamma-grid.png}
+    \includegraphics[width=4.5cm]{img/travelTimeVsGamma-grid.png} %TODO make it possible to see the zero
     \label{fig:travelTimeVsGamma-grid}
   }
   \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
@@ -373,7 +375,7 @@ Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more ro
 \label{sec:qlParamsNineOD}
 In the nine OD scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. As this scenario has no loops and the number of possible routes is smaller than in the grid scenario, there is no need to evaluate the number of aborted trips and the mean trip length.
 
-In each run, the mean travel time for all drivers was registered and averaged in the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots displayed on Figure \ref{fig:qLearningParams}.
+In each run, the mean travel time for all drivers was registered and averaged over the last 10 episodes. Each run consists on 100 learning episodes. For each parameter, 10 runs were executed to generate the plots displayed on Figure \ref{fig:qLearningParams}.
 
 \begin{figure}[ht]
   \centering
@@ -396,9 +398,9 @@ Figure \ref{fig:travelTimeVsGamma} shows a decrease in the travel time when $\ga
 Analysing both scenarios, it is possible to see that the RL approach is less sensitive to the values of the Q-learning parameters in the nine OD scenario, because it is much simpler than the 6x6 grid in terms of the number of possible routes and the lack of returning links. 
 
 \subsubsection{Comparison with other route choice methods:}
-In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice, introduced in Section \ref{sec:nineODDescription}.
+In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice, discussed in Section \ref{sec:nineODDescription}.
 
-For the RL based approach, experiment paramenters are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each run consists of $m = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$. For the Q-learning update rule (Eq. \eqref{eq:qlearning}), $\alpha = 0.5$ and $\gamma = 0.9$ as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
+For the Q-learning update rule (Eq. \eqref{eq:qlearning}) of the RL approach, $\alpha$ was set as 0.5 and $\gamma $ was set as 0.9 as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
 The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown on Figure \ref{fig:travelTimeComparison}. 
 
@@ -415,7 +417,7 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
   \centering
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/numCongestedRoads-hatched.png}
-    \label{fig:numCongestedRoads} 
+    \label{fig:numCongestedRoads} %TODO change order: RL / MG / (same as travel time)
   }
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/averageOverload-hatched.png}
@@ -425,7 +427,7 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
   \label{fig:loadBalance}
 \end{figure}
 
-Using the defined load balance evaluation metrics (defined in Section \ref{sec:loadBalanceMetrics}), Figure \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher than the RL approach: minority game based drivers tend to avoid congested roads even when they would lead to their destinations faster than an uncongested alternative. 
+Using the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Figure \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher than the RL approach: minority game based drivers tend to avoid congested roads even when they would lead to their destinations faster than an uncongested alternative. 
 
 The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
 
@@ -438,21 +440,21 @@ Using the proposed approach, drivers learned the routes between their origins an
 
 Especially when the learning rate is high, the learning process does not converge and several drivers do not find routes to their destinations. Also, the discount rate for future rewards must be high, otherwise drivers will not take into account the future consequences of the current choice, leading to bad options in the subsequent steps.
 
-In the nine OD pairs scenario, our reinforcement learning for route choice approach was helpful in both the individual and the global points of view, as drivers achieve reasonable travel times (within expectation) on average, and traffic is distributed over the network, as links does not get heavily congested.
+In the nine OD pairs scenario, our reinforcement learning approach for route choice was helpful in both the individual and the global points of view, as drivers achieve reasonable travel times (within expectation) on average, and traffic is distributed over the network, as links does not get heavily congested.
 
-The RL approach outperformed the other route choice methods regarding drivers' experienced travel time. On average, drivers from all OD pairs achieved reasonable travel times, while the other methods did not achieved this.
+The RL approach outperformed the other route choice methods regarding drivers' experienced travel time. On average, drivers from all OD pairs achieved reasonable travel times, while the other methods did not achieve this.
 
 %In terms of load distribution over the road network, the proposed RL approach was slightly outperformed by the minority game based approach proposed by \cite{Galib&Moser2011}. 
 
 The proposed approach has the advantage of making realistic assumptions as it only relies on drivers own experience about the road network (i.e. the experienced travel time). This way, the use of real-time information and historic data of links is not necessary. This makes our approach an attractive and feasible alternative to be used on existing navigation systems, as no new technology is required. That is, as navigation systems are already capable of recording travel time for traversing a given road, the RL approach can be helpful as this is the only information it needs.
 
-Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms for this transportation domain.
+Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms for this transportation domain. %TODO further microscopic investigation 
 
 \section*{Acknowledgments}
 
 Authors would like to thank Mr. Syed Galib for clarifying questions on the minority game for route choice approach and for providing data for comparison. Both authors are partially supported by CNPq and FAPERGS. %The authors also would like to thank the anonymous reviewers for their suggestions of paper improvements.
 
 \bibliographystyle{plain}
-\bibliography{references,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
+\bibliography{references,stringDefs,AB,CD,EG,HJ,KL,MO,OURS,PR,S,TZ} 
 
 \end{document}
