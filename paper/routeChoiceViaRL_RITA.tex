@@ -285,7 +285,7 @@ In this scenario, the RL for route choice approach will be compared with three d
 
 \begin{itemize}
   \item Random: At each step, drivers choose one of the possible outbound links with uniform probability.
-  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belongs to a shortest path. %TODO mention selfish here
+  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths will be the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belong to a shortest path. %TODO mention selfish here
   \item Minority Game: Drivers use the modified minority game approach proposed by \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description, it is suggested that readers refer to \cite{Galib&Moser2011}.
 \end{itemize}
 
@@ -332,15 +332,15 @@ For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-v
 \begin{figure}[ht]
   \centering
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/abortedTripsVsAlpha.png}
+    \includegraphics[width=6cm]{img/abortedTripsVsAlpha.png}
     \label{fig:abortedTripsVsAlpha}
   }
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/tripLengthVsAlpha.png}
+    \includegraphics[width=6cm]{img/tripLengthVsAlpha.png}
     \label{fig:tripLengthVsAlpha}
   }
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/travelTimeVsAlpha-grid.png}
+    \includegraphics[width=6cm]{img/travelTimeVsAlpha-grid.png}
     \label{fig:travelTimeVsAlpha-grid}
   }
   \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time \subref{fig:travelTimeVsAlpha-grid} in the 6x6 grid scenario.}
@@ -352,15 +352,15 @@ Figure \ref{fig:qLearningAlpha-grid} shows that for high values of $\alpha$, dri
 \begin{figure}[ht]
   \centering
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/abortedTripsVsGamma.png}
+    \includegraphics[width=6cm]{img/abortedTripsVsGamma.png}
     \label{fig:abortedTripsVsGamma}
   }
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/tripLengthVsGamma.png}
+    \includegraphics[width=6cm]{img/tripLengthVsGamma.png}
     \label{fig:tripLengthVsGamma}
   }
   \subfigure[]{
-    \includegraphics[width=4.5cm]{img/travelTimeVsGamma-grid.png} %TODO make it possible to see the zero
+    \includegraphics[width=6cm]{img/travelTimeVsGamma-grid.png} %TODO make it possible to see the zero
     \label{fig:travelTimeVsGamma-grid}
   }
   \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
