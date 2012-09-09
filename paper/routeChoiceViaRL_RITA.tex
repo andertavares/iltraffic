@@ -1,5 +1,6 @@
 \documentclass{RITA}
-\usepackage{amssymb,amsfonts,mathtools,subfigure,url,times,graphicx,pslatex,multicol,footmisc,cite}
+\usepackage{amssymb,amsfonts,mathtools,float,subfigure,url,times,graphicx,pslatex,multicol,footmisc,cite}
+\usepackage{titlesec}
 
 % Equation terms definition
 \newcommand{\route}[1]{\ensuremath{P_#1}}	%route for driver 'i'
@@ -134,11 +135,15 @@ Traffic assignment problems can be addressed by several approaches, many of them
 This kind of complex scenario was investigated by Bazzan and Kl\"ugl \cite{Bazzan&Kluegl2008}, where the effect of real time information on drivers' route replanning is assessed. The work includes studies with adaptive traffic lights. In the most successful en-route replanning strategy presented in that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
 %More recently, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for use in a complex scenario with several available routes. 
-The problem of traffic assignment can also be tackled by the evolutionary version of the minority game \cite{Challet&Zhang1997}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
+The problem of traffic assignment can also be tackled by the evolutionary version of the minority game \cite{Challet&Zhang1997} and this is done by Galib and Moser \cite{Galib&Moser2011}. In evolutionary games, it is assumed that players (or agents) have bounded rationality and use inductive reasoning to make their decisions. This is suitable to the transportation domain as humans do have bounded rationality and inductive reasoning is used in human decision-making process, as remarked by Arthur \cite{Arthur1994}.
 
-The minority game consists of an odd number of player agents that must choose between two options at each round. Agents on the minority side receive one point. The only information available for agents is the history of winning options. Each agent has a set of strategies that predicts the next winning option given the history. Agents score each strategy according to the number of times it went correct and they use the best strategy to make the prediction for the next round.
+In the minority game, an odd number of player agents must choose between two options. At each round, agents on the minority side win and receive a reward. Agents keep in memory the history of winning options and use this information to act in the next round. Each player agent has a finite set of strategies that map the history of winning options to an option to be chosen in the next round. Each strategy is scored according to the number of times it went correct. Player agents use the strategy with the highest score to act in the next round.
 
-Regarding traffic assignment, the minority game can only be used in two-route choice scenarios as it is a two-alternative game. To overcome this limitation, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for a complex scenario with several available routes. In this modified version, agents' strategies predict a road's occupancy given the occupancy history on the past trips. Using the proposed approach, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. The proposed approach uses historical data of the load of all links to choose the next one on the route. Having historical information of the links used by the driver is a reasonable assumption, but having historical information of all links on the network is unrealistic. The approach proposed on the present work is compared with the modified minority game. 
+Regarding traffic assignment, the minority game can only be used in two-route choice scenarios as it is a two-alternative game. To overcome this limitation, Galib and Moser \cite{Galib&Moser2011} proposed a modified version of the minority game for a complex scenario with several available routes. 
+
+In this modified version, for each road network link, each driver agent has a finite set of strategies that predict a link's occupancy given the occupancy history on the past trips. Each strategy is scored according to the actual link's occupancy and the total travel time of the driver agent.
+
+Using the proposed approach, drivers achieve reasonable (within expectation) travel times and distribute themselves over the road network in a way that few links get overused. In the proposed approach, driver agents have historical occupancy data of all links on the road network. For a driver, having historical information of the links it used is a reasonable assumption, but having historical information of all links on the network is unrealistic. The approach proposed on the present work is compared with the modified minority game in section \ref{sec:comparison}. 
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
@@ -335,7 +340,7 @@ In the grid scenario, the effect of Q-learning parameters was measured in terms 
 
 For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-varying tests, $\alpha$ was set as $0.5$.
 
-\begin{figure}[ht]
+\begin{figure}
   \centering
   \subfigure[]{
     \includegraphics[width=6cm]{img/abortedTripsVsAlpha.png}
@@ -355,7 +360,7 @@ For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-v
 
 Figure \ref{fig:qLearningAlpha-grid} shows that for high values of $\alpha$, drivers have poor performance as some of them do not manage to arrive at their destinations, increasing the number of aborted trips and the mean trip length. Also, travel times are very high. This shows that in a nonstationary scenario, a high learning rate is harmful.
 
-\begin{figure}[ht]
+\begin{figure}
   \centering
   \subfigure[]{
     \includegraphics[width=6cm]{img/abortedTripsVsGamma.png}
@@ -383,7 +388,7 @@ In the nine OD scenario, the effect of Q-learning parameters was measured in ter
 
 In each execution (the repetition of $m$ episodes of the RL approach described in \ref{sec:proposal}), the mean travel time for all drivers was registered and averaged over the last 10 episodes. Each execution consists of $m = 100$ learning episodes. For each parameter, 10 executions were made to generate the plots displayed on Figure \ref{fig:qLearningParams}.
 
-\begin{figure}[ht]
+\begin{figure}
   \centering
   \subfigure[]{
     \includegraphics[width=6cm]{img/travelTimeVsAlpha.png}
@@ -404,11 +409,14 @@ Figure \ref{fig:travelTimeVsGamma} shows a decrease in the travel time when $\ga
 Analysing both scenarios, it is possible to see that the RL approach is less sensitive to the values of the Q-learning parameters in the nine OD scenario, because it is much simpler than the 6x6 grid in terms of the number of possible routes and the lack of returning links. 
 
 \subsubsection{Comparison with other route choice methods:}
+\label{sec:comparison}
 In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game approaches for route choice, discussed in Section \ref{sec:nineODDescription}.
 
 For the Q-learning update rule (Eq. \eqref{eq:qlearning}) of the RL approach, $\alpha$ was set as 0.5 and $\gamma $ was set as 0.9 as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
 The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown on Figure \ref{fig:travelTimeComparison}. 
+
+In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD Pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=10cm]{img/travelTimeComparison-hatched.png}}
@@ -416,10 +424,7 @@ The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is show
     \label{fig:travelTimeComparison}
 \end{figure}
 
-In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD Pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
-
-
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/numCongestedRoads-hatched.png}
@@ -433,9 +438,14 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
   \label{fig:loadBalance}
 \end{figure}
 
+
+
+
 Using the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Figure \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher than the RL approach: minority game based drivers tend to avoid congested roads even when they would lead to their destinations faster than an uncongested alternative. 
 
 The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
+
+
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
