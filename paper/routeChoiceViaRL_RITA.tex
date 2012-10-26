@@ -44,9 +44,9 @@
 \maketitle
 
 \begin{abstract}
-Traffic is a phenomena that emerges from individual, uncoordinated and, most of the times, selfish route choice made by drivers. In general, this leads to poor global and individual performance, regarding travel times and road network load balance. This work presents a reinforcement learning based approach for route choice which relies solely on drivers' experience to guide their decisions. 
+In transportation systems, drivers usually choose their routes in an uncoordinated way. In general, this leads to poor global and individual performance, regarding travel times and road network load balance. This work presents a reinforcement learning based approach for route choice which relies solely on drivers' experience to guide their decisions. 
 There is no coordinated learning mechanism, thus driver agents are independent learners. Our approach is tested in two abstract traffic scenarios and it is compared to other route choice methods. 
-Experimental results show that drivers learn routes in complex scenarios with no prior knowledge. Plus, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, satisfactory performance is achieved regarding road network load balance. 
+Experimental results show that drivers learn routes in complex scenarios with no prior knowledge. Moreover, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, satisfactory performance is achieved regarding road network load balance. 
 The simplicity, realistic assumptions and performance of the proposed approach suggests that it is a feasible candidate for implementation in navigation systems for guiding drivers decisions regarding route choice.
 \end{abstract}
 % \index{annotation pipeline}
@@ -64,7 +64,7 @@ The simplicity, realistic assumptions and performance of the proposed approach s
 
 Traffic and mobility present challenging issues to authorities, traffic engineers and researchers. To deal with the increasing traffic demand, techniques and methods to optimize the existing road traffic network are attractive since they do not include expensive and environmental-impacting changes on the infrastructure.
 
-In a commuting scenario, it is reasonable to assume that drivers choose their routes independently and, most of the time, uninformed about real-time road traffic condition, thus relying on their own experience. Daily commuters usually have an expectation on the time needed to arrive on their destinations and, if a driver reaches its destination within that expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles get distributed on the road network proportionally to the capacity of each road. In a commuting scenario, drivers strive to minimize their travel times. At the same time, there is a global cost function that rates the whole system's behavior, like the distribution of vehicles in proportion to the capacity of each road. Multiagent systems such as this commuting scenario are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown by Tumer and Wolpert \cite{Tumer&Wolpert2004}.
+In a commuting scenario, it is reasonable to assume that drivers choose their routes independently from one another and that previous experience is taken into account when they are choosing a route. Daily commuters usually have an expectation about the time needed to arrive on their destinations and, if a driver reaches its destination within that expectation, his travel time can be considered  reasonable. From a global point of view, it is desired that vehicles get distributed on the road network proportionally to the capacity of each road. In a commuting scenario, drivers strive to minimize their travel times. At the same time, there is a global cost function that rates the whole system's behavior, like the distribution of vehicles in proportion to the capacity of each road. Multiagent systems such as this commuting scenario are called collectives. The local and global goals can be highly conflicting and there is no general approach to tackle this complex question of collectives, as shown by Tumer and Wolpert \cite{Tumer&Wolpert2004}.
 
 Traffic assignment concerns the allocation of a given set of drivers to specific routes, satisfying the demand between origins and destinations in transportation networks. In this work, traffic assignment is modeled as a reinforcement learning problem so that agents make decisions using only their own experience, which is gained through interaction with the environment. The environment is a road network that abstracts some real-world characteristics such as vehicle movement along the roads, allowing us to focus on the main subject which is the choice of one route among the ones available for each driver.
 
@@ -74,12 +74,12 @@ The remainder of this document is organized as follows: Section \ref{sec:concept
 \label{sec:concepts}
 \subsection{Road traffic network modeling}
 
-A road network can be modeled as a graph, with a set of nodes which represent the intersections, and links among these nodes, which represent the roads. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or length. 
+A road network can be modeled as a graph, with a set of nodes that represents the intersections, and links among these nodes, which represent the road sections. The weight of a link represents a form of cost associated with the link. For instance, the cost can be the travel time, fuel spent or length. 
 
-The road network contains origins and destinations that are subsets of the set of nodes. A driver's trip consists of a set of links, forming a route between his origin and destination nodes (OD pair). A commuting scenario consists on repeated trips, such as drivers going from home to work in the same hour of the day during the workdays.
+The road network contains origins and destinations that are subsets of the set of nodes. A driver's trip consists of a set of links, forming a route between his origin and destination nodes (OD pair). A commuting scenario consists of repeated trips, such as drivers going from home to work approximately in the same hour of the day during the workdays.
 
 Drivers travelling through the road network generate traffic flow. Traffic assignment methods need a suitable cost function that relates traffic flow and link's attributes (capacity, free-flow travel time). % However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism.
-One of the most common function of this type is shown on Eq. \eqref{eq:tt} \cite{Ortuzar&Willumsen2001}.
+One of the most common function of this type is shown Eq. \eqref{eq:tt} \cite[p.~325]{Ortuzar&Willumsen2001}.
 
 \begin{equation}
 \label{eq:tt}
@@ -94,23 +94,19 @@ Reinforcement learning (RL) deals with the problem of making an agent learn a be
 
 The agent interacts with the environment following a policy $\pi$ and tries to learn the optimal policy $\pi^*$ that maps the current environment state $s \in S$ to an action $a \in A$ in a way that the future reward is maximized. At each state, the agent must select an action $a$ according to a strategy that balances exploration (gain of knowledge) and exploitation (use of knowledge). One possible strategy is $\epsilon$-greedy, that consists on choosing a random action (exploration) with probability $\epsilon$ or choosing the best action (exploitation) with probability $1 - \epsilon$. In the beginning, $\epsilon$ starts with a high value (high exploration) and decreases with time, leading to high exploitation in the end.
 
-Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Watkins&Dayan1992}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha \in [0:1]$ is the learning rate and $\gamma \in [0:1]$ is the discount factor. $Q(s,a)$ is an entry indexed by state $s$ and action $a$ in the Q-table, which stores the values (called Q-values) of state-action pairs. The Q-value is the expected discounted reward for executing action $a$ at
-state $s$ and following the policy $\pi$ thereafter.
+Q-learning is an algorithm that converges towards the optimal policy, given certain conditions \cite{Watkins&Dayan1992}. Its update rule is shown in Eq. \eqref{eq:qlearning}, where $<s,a,s',R>$ is an experience tuple, meaning that the agent performed action $a$ in state $s$, reaching state $s'$, receiving reward $R$. Action $a'$ is one that can be taken on $s'$, $\alpha \in [0:1]$ is the learning rate, and $\gamma \in [0:1]$ is the discount factor. $Q(s,a)$ is an entry indexed by state $s$ and action $a$ in the Q-table, which stores the values (called Q-values) of state-action pairs. The Q-value is the expected discounted reward for executing action $a$ at state $s$ and following the policy $\pi$ thereafter. For a complete description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \begin{equation}
 \label{eq:qlearning}
 Q(s,a) = (1 - \alpha) Q(s,a) + \alpha (R + \gamma \max_{\substack{a'}}(Q(s',a')))
 \end{equation}
 
-For a complete description of Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
-
-
 %For the next sections it will be assumed that the reader is familiar with Q-learning. For more information about Q-learning, the reader may refer to \cite{Watkins&Dayan1992}.
 
 \subsection{Independent learners} 
-Traffic scenarios are associated with the class of non-cooperative multi-agent systems, as there are several agents interacting with the environment and sometimes coordinating themselves to use the traffic network resources. Multi-agent reinforcement learning (MARL) can be divided in two classes: independent learners (ILs), in which agents ignore the existence of other agents, and joint action learners (JALs), in which agents learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. 
+Traffic scenarios are associated with the class of non-cooperative multi-agent systems. In traffic, drivers can be regarded as agents that use the traffic network resources. Multi-agent reinforcement learning (MARL) can be divided in two classes: independent learners (ILs), in which agents ignore the existence of other agents, and joint action learners (JALs), in which agents learn the value of their own actions combined with other agents' actions via integration of RL with coordination learning methods \cite{Claus&Boutilier1998}. 
 
-In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible, as Bazzan \cite{Bazzan2009} remarks. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach \cite{Littman1994}.
+In complex scenarios like transportation systems, there is a large number of agents, making the modeling of JALs unfeasible, as remarked by Bazzan in \cite{Bazzan2009}. On the other hand, when agents are modeled as ILs, the convergence properties of Q-learning become invalid, as the environment is nonstationary. Also, it is remarked by Littman \cite{Littman1994} that training adaptive agents without considering other agents adaptation is not mathematically justified and it is prone to reaching a local maximum where agents quickly stop learning. Despite this, some researchers achieved amazing results with this approach \cite{Littman1994}.
 
 For an independent learner agent, the other agents learning and changing their behavior is understood as a change of the environment dynamics. In the present work, agents are modeled as ILs. %, because modeling agents as JALs leads to scalability problems, as agents must consider every other agents' actions. 
 
