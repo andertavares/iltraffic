@@ -127,7 +127,9 @@ Another example of successful application of independent learners can be found i
 
 %With this process, a Pareto-efficient distribution or the Wardrop's equilibrium \cite{Wardrop1952} may be reached. In this condition, no agent can reduce its costs by switching routes without rising costs for other agents. 
 
-Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004jasss}. The former work assesses the effect of different strategies for binary route choice. The latter presents a model where commuters behavior is based on evolving heuristics and also performs experiments regarding route choice with a forecast: a traffic control system perceives drivers' decisions and returns a forecast. Then drivers have to decide the actual route selection. Each one of these works assessed relevant aspects of the agents' decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
+Traffic assignment problems can be addressed by several approaches, many of them considering abstract traffic scenarios. Two-route scenarios are studied in \cite{Bazzan+2000icmas,Kluegl&Bazzan2004jasss,Chmura&Pitz2007}. The first work assesses the effect of different strategies for binary route choice. The second presents a model where commuters' behavior is based on evolving heuristics and also performs experiments regarding route choice with a forecast: a traffic control system perceives drivers' decisions and returns a forecast. Then drivers have to decide the actual route selection. The third uses a reinforcement learning scheme to reproduce human decision-making in a corresponding experimental study
+
+Each one of these works assessed relevant aspects of the agents' decision-making process, even though only binary route choice scenarios were studied. The interest of the present work is to evaluate a route choice approach in more complex scenarios, with several routes.
 
 This kind of complex scenario was investigated by Bazzan and Kl\"ugl \cite{Bazzan&Kluegl2008}, where the effect of real time information on drivers' route replanning is assessed. The work includes studies with adaptive traffic lights. In the most successful en-route replanning strategy presented in that work, the authors assume that the entire network occupancy is known by the drivers. This assumption was needed for assessing the effects of re-routing, although the availability of real time information of the entire network for all the drivers is an unrealistic assumption.
 
@@ -343,7 +345,7 @@ For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-v
     \includegraphics[width=6cm]{img/travelTimeVsAlpha-grid.png}
     \label{fig:travelTimeVsAlpha-grid}
   }
-  \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time \subref{fig:travelTimeVsAlpha-grid} in the 6x6 grid scenario.}
+  \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time in log scale \subref{fig:travelTimeVsAlpha-grid} in the 6x6 grid scenario.}
   \label{fig:qLearningAlpha-grid}
 \end{figure}
 
@@ -363,7 +365,7 @@ Figure \ref{fig:qLearningAlpha-grid} shows that, for high values of $\alpha$, dr
     \includegraphics[width=6cm]{img/travelTimeVsGamma-grid.png} %TODO make it possible to see the zero
     \label{fig:travelTimeVsGamma-grid}
   }
-  \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
+  \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time in log scale \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
   \label{fig:qLearningGamma-grid}
 \end{figure}
 
@@ -413,7 +415,7 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
     \label{fig:travelTimeComparison}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \centering
   \subfigure[]{
     \includegraphics[width=5.8cm]{img/numCongestedRoads-hatched.png}
