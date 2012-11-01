@@ -145,11 +145,11 @@ Regarding traffic assignment, the minority game can only be used in two-route ch
 
 %TODO cut other IL works???%%% Prior to the present work, independent learning agents were studied in cooperative repeated games \cite{Claus&Boutilier1998,Tan1993,Sen+1994}. The present study is an application of the independent learners concept in a competitive multi-agent system as agents compete for a resource (the road network). Decisions on this route choice scenario are sequential, making this a more complex scenario.
 
-Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In the former work, the authors test human behavior in the minority game. In the experiments, human subjects must choose repeatedly between two routes. In the latter work, real-time traffic information is given to human subjects and they must choose between two routes. The authors conclude that both experience and information play a role in the choices made by the subjects.
+Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&Shiftan2010}. In \cite{Chmura&Pitz2007}, the authors test human behavior in the minority game. In the experiments, human subjects must choose repeatedly between two routes. In \cite{Ben-Elia&Shiftan2010}, real-time traffic information is given to human subjects and they must choose between two routes. The authors conclude that both experience and information play a role in the choices made by the subjects.
 
 Both works are focused on presenting reinforcement based models for human behavior estimation, rather than proposing a new approach for improving the route choice process in a scenario with several available routes. 
 
-Such approach can be found in \cite{Tavares&Bazzan2012}, which is a previous work where we model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes the whole route travel time into account. The performance the proposed approach is assessed in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+Such approach can be found in \cite{Tavares&Bazzan2012}, which is a previous work where we model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes the whole route travel time into account. The performance of the proposed approach is assessed in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
 
 In the present work, the traffic assignment problem is modeled as a MDP with states and the reward function is simplified taking into account only the travel time in the chosen link. Also, in relation to \cite{Tavares&Bazzan2012}, new metrics for road congestion evaluation are proposed and the RL-based approach is compared with more route choice strategies. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
 
@@ -181,7 +181,7 @@ At the beginning of the execution, OD pairs are randomly assigned to each driver
 
 \subsubsection{Execution:}
 
-In each episode, each driver follows the steps shown in Figure \ref{fig:flowchart}.
+In each episode, each driver follows the steps shown in Fig. \ref{fig:flowchart}.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=7cm]{img/flowchart3.png}}
@@ -252,7 +252,7 @@ The following metrics are be evaluated in this scenario:
 
 \subsection{Nine OD pairs}
 \label{sec:nineODDescription}
-The abstract road network used in this scenario consists of 10 nodes and 24 links, as shown in Figure \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
+The abstract road network used in this scenario consists of 10 nodes and 24 links, as shown in Fig. \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
 
 % {%
 % \begin{table}[ht]
@@ -330,7 +330,7 @@ Experiment parameters' values are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 mi
 
 %TODO do the alpha-gamma grid tests
 
-In the grid scenario, the effect of Q-learning parameters was measured in terms of the number of aborted trips, the mean trip length and mean travel time for all drivers. In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in \ref{sec:proposal}), these values were registered and averaged over the last 10 episodes. For each parameter, 10 executions were made to generate the plots.
+In the grid scenario, the effect of Q-learning parameters was measured in terms of the number of aborted trips, the mean trip length and mean travel time for all drivers. In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in Section \ref{sec:proposal}), these values were registered and averaged over the last 10 episodes. For each parameter, 10 executions were made to generate the plots.
 
 For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-varying tests, $\alpha$ was set as $0.5$.
 
@@ -380,7 +380,7 @@ Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more ro
 \label{sec:qlParamsNineOD}
 In the nine OD scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. As this scenario has no loops and the number of possible routes is smaller than in the grid scenario, there is no need to evaluate the number of aborted trips and the mean trip length.
 
-In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in \ref{sec:proposal}), the mean travel time for all drivers was registered and averaged over the last 10 episodes.  For each parameter, 10 executions were made to generate the plots displayed on Figure \ref{fig:qLearningParams}.
+In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in Section \ref{sec:proposal}), the mean travel time for all drivers was registered and averaged over the last 10 episodes.  For each parameter, 10 executions were made to generate the plots displayed on Fig. \ref{fig:qLearningParams}.
 
 \begin{figure}
   \centering
@@ -408,7 +408,7 @@ In the following experiments, the goal is to compare the RL approach with the ra
 
 For the Q-learning update rule (Eq. \ref{eq:qlearning}) of the RL approach, $\alpha$ was set as 0.5 and $\gamma $ was set as 0.9 as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
-The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown on Figure \ref{fig:travelTimeComparison}. 
+The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown on Fig. \ref{fig:travelTimeComparison}. 
 
 In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD Pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
@@ -435,7 +435,7 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
 
 
 
-Using the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Figure \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher compared to the RL approach: minority game based drivers tend to avoid congested links even when they would lead to their destinations faster than an uncongested alternative. 
+Using the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Fig. \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher compared to the RL approach: minority game based drivers tend to avoid congested links even when they would lead to their destinations faster than an uncongested alternative. 
 
 The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
 
