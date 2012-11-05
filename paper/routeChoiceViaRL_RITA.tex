@@ -46,7 +46,7 @@
 \begin{abstract}
 In transportation systems, drivers usually choose their routes in an uncoordinated way. In general, this leads to poor global and individual performance regarding travel times and road network load balance. This work presents a reinforcement learning based approach for route choice which relies solely on drivers' experience to guide their decisions. 
 There is no coordinated learning mechanism, thus driver agents are independent learners. Our approach is tested in two abstract traffic scenarios and it is compared to other route choice methods. 
-Experimental results show that drivers learn routes in complex scenarios with no prior knowledge. Moreover, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, satisfactory performance is achieved regarding road network load balance. 
+Experimental results show that drivers learn routes in complex scenarios. Moreover, the approach outperforms the compared route choice methods regarding drivers' travel time. Also, satisfactory performance is achieved regarding road network load balance. 
 The simplicity, realistic assumptions and performance of the proposed approach suggest that it is a feasible candidate for implementation in navigation systems for guiding drivers decisions regarding route choice.
 \end{abstract}
 % \index{annotation pipeline}
@@ -79,7 +79,7 @@ A road network can be modeled as a graph, with a set of nodes that represents th
 The road network contains origins and destinations that are subsets of the set of nodes. A driver's trip consists of a set of links, forming a route between his origin and destination nodes (OD pair). A commuting scenario consists of repeated trips, such as drivers going from home to work approximately in the same hour of the day during the workdays.
 
 Drivers travelling through the road network generate traffic flow. Traffic assignment methods need a suitable cost function that relates traffic flow and link's attributes (capacity, free-flow travel time). % However, a simplified form that relates attributes of a  given link and traffic flow only on that link can be used, although with some loss of realism.
-One of the most common function of this type is shown Eq. \eqref{eq:tt} \cite[p.~325]{Ortuzar&Willumsen2001}.
+One of the most common function of this type is shown Eq. \eqref{eq:tt} \cite[Section~10.1.3]{Ortuzar&Willumsen2001}.
 
 \begin{equation}
 \label{eq:tt}
@@ -149,7 +149,7 @@ Learning-based models for route choice appear in \cite{Chmura&Pitz2007,Ben-Elia&
 
 Both works are focused on presenting reinforcement based models for human behavior estimation, rather than proposing a new approach for improving the route choice process in a scenario with several available routes. 
 
-Such approach can be found in \cite{Tavares&Bazzan2012}, which is a previous work where we model traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes the whole route travel time into account. The performance of the proposed approach is assessed in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
+Such approach can be found in \cite{Tavares&Bazzan2012}, where we have modeled traffic assignment as a MDP with no states. The actions set comprises the selection of network links and the reward function is based on the link's travel time weighted by a factor that takes the whole route travel time into account. The performance of the proposed approach is assessed in the same scenario studied by Galib and Moser \cite{Galib&Moser2011} and satisfactory results are obtained regarding travel times (on average, drivers achieve travel times within expectation) and roads occupancy (only few roads get overloaded). 
 
 In the present work, the traffic assignment problem is modeled as a MDP with states and the reward function is simplified taking into account only the travel time in the chosen link. Also, in relation to \cite{Tavares&Bazzan2012}, new metrics for road congestion evaluation are proposed and the RL-based approach is compared with more route choice strategies. %The present work also studies the RL approach in a 6x6 grid scenario, that resembles some real-world features, bringing the RL approach closer to reality.
 
@@ -244,7 +244,7 @@ Regarding the road network capacity, there are main links, whose capacity is hig
 
 In the 6x6 grid scenario, 300 drivers populate the road network. Prior experimentation has shown that this number yields reasonable load in the road network. That is, with fewer drivers, congestions seldom occur and drivers don't need to look for alternative routes. On the other hand, with more drivers, most links get congested. This makes it difficult to assess the performance of the drivers because they have no attractive alternative routes.
 
-The following metrics are be evaluated in this scenario:
+The following metrics are evaluated in this scenario:
 
 \begin{itemize}
   \item Number of aborted trips: this metric assesses how many drivers cannot find a path to their destinations within the limit of the learning episode (500 steps).
@@ -296,9 +296,9 @@ In this scenario, the RL for route choice approach is compared with three differ
   \item Minority Game: Drivers use the modified minority game approach proposed in \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description, readers may refer to \cite{Galib&Moser2011}.
 \end{itemize}
 
-The comparison of the different route choice methods is based on metrics regarding reasonable travel times and road network load balance.
+The comparison of the different route choice methods is based on metrics regarding the difference between expected and actual travel time as well as on road network load balance.
 
-\subsubsection{Reasonable travel times:}
+\subsubsection{Difference between expected and actual travel time:}
 \label{sec:ttMetric}
 In the real world, drivers have an expectation on the trip travel time, the expected load and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{\optRoute{i}}$ on his shortest route $\optRoute{i}$ is given by Eq. \eqref{eq:ett}. In this equation, $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh{i}$). This estimation is given by the number of vehicles in driver $i$'s OD pair, plus a random number in the range $[-0,05 \times |D| : 0,05 \times |D|]$, where $|D|$ is the total number of drivers in the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
 
@@ -328,7 +328,7 @@ The following experiments have the goal of assessing the effect of Q-learning pa
 Experiment parameters' values are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each execution consists of $\numepis = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$.
 
 
-\subsection{Q-learning parameters in grid scenario}
+\subsection{Q-learning parameters in the grid scenario}
 
 %TODO do the alpha-gamma grid tests
 
@@ -350,7 +350,7 @@ For the $\alpha$-varying tests, $\gamma$ was set as $1.0$ and for the $\gamma$-v
     \includegraphics[width=6cm]{img/travelTimeVsAlpha-grid.png}
     \label{fig:travelTimeVsAlpha-grid}
   }
-  \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, the mean trip length \subref{fig:tripLengthVsAlpha} and mean travel time in log scale \subref{fig:travelTimeVsAlpha-grid} in the 6x6 grid scenario.}
+  \caption{Box-and-whisker charts showing the effect of $\alpha$ on the number of aborted trips \subref{fig:abortedTripsVsAlpha}, on the mean trip length \subref{fig:tripLengthVsAlpha} and on the mean travel time in log scale \subref{fig:travelTimeVsAlpha-grid} in the 6x6 grid scenario.}
   \label{fig:qLearningAlpha-grid}
 \end{figure}
 
@@ -370,7 +370,7 @@ Figure \ref{fig:qLearningAlpha-grid} shows that, for high values of $\alpha$, dr
     \includegraphics[width=6cm]{img/travelTimeVsGamma-grid.png} %TODO make it possible to see the zero
     \label{fig:travelTimeVsGamma-grid}
   }
-  \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, the mean trip length \subref{fig:tripLengthVsGamma} and mean travel time in log scale \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
+  \caption{Box-and-whisker charts showing the effect of $\gamma$ on the number of aborted trips \subref{fig:abortedTripsVsGamma}, on the mean trip length \subref{fig:tripLengthVsGamma} and on the mean travel time in log scale \subref{fig:travelTimeVsGamma-grid} in the 6x6 grid scenario.}
   \label{fig:qLearningGamma-grid}
 \end{figure}
 
@@ -406,7 +406,7 @@ Analysing both scenarios, it is possible to see that the RL approach is less sen
 
 \subsubsection{Comparison with other route choice methods:}
 \label{sec:comparison}
-In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game (MG) approaches for route choice, discussed in Section \ref{sec:nineODDescription}.
+In the following experiments, the goal is to compare the RL approach with the random, greedy and minority game (MG) approaches for route choice in the nine OD pairs scenario, as discussed in Section \ref{sec:nineODDescription}.
 
 For the Q-learning update rule (Eq. \ref{eq:qlearning}) of the RL approach, $\alpha$ was set as 0.5 and $\gamma $ was set as 0.9 as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
