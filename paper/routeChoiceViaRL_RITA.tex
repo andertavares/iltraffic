@@ -243,21 +243,23 @@ Every other node & 2.67\% & 1.15\% \\ \hline
 \end{table}
 }%
 %TODO INSTANTIATE Y AND Z
-Regarding the road network capacity, there are main links, whose capacity is 45 vehicles. The remaining links have the capacity of 15 vehicles. The main links are those between nodes B3 to E3 and E3 to E5 (thicker lines on Fig. \ref{fig:6x6grid}). With this feature, the abstract 6x6 scenario becomes more realistic, as the capacities of the links are not homogeneous.
+Regarding the road network capacity, there are main links, whose capacity is 45 vehicles. The remaining links have the capacity of 15 vehicles. The main links are those between nodes B3 to E3 and E3 to E5 (thicker lines in Fig. \ref{fig:6x6grid}). With this feature, the abstract 6x6 scenario becomes more realistic, as the capacities of the links are not homogeneous.
 
 In the 6x6 grid scenario, 300 drivers populate the road network. Prior experimentation has shown that this number yields reasonable load in the road network. That is, with fewer drivers, congestions seldom occur and drivers do  not need to look for alternative routes. On the other hand, with more drivers, most links get congested. This  makes it difficult to assess the performance of the drivers because they have no attractive alternative routes.
+
+In this scenario, the parameters for Eq. \eqref{eq:tt} are adjusted as follows: $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. These values are also used in other works that implement the same traffic model, such as \cite{Galib&Moser2011,Tavares&Bazzan2012,Tavares&Bazzan2012bwss}.
 
 The following metrics are evaluated in this scenario:
 
 \begin{itemize}
   \item Number of aborted trips: this metric assesses how many drivers cannot find a path to their destinations within the limit of the learning episode (500 steps).
   \item Trip length: this metric assesses how many steps it takes for drivers to reach their destinations. If drivers take too many steps to finish their trips, this means that they are possibly building routes with loops.
- \item Travel time: this metric assesses how drivers' performance improve with time. More than just building a route without loops, drivers need to select links with low occupancy in order to achieve better travel times from their origins to their destinations.
+ \item Travel time: this metric assesses how the performance of the drivers improve with time. More than just building a route without loops, drivers need to select links with low occupancy in order to achieve better travel times from their origins to their destinations.
 \end{itemize}
 
 \subsection{Nine OD pairs}
 \label{sec:nineODDescription}
-The abstract road network used in this scenario consists of 10 nodes and 24 links, as shown in Fig. \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
+The abstract road network used in this scenario consists of 10 nodes and 24 links, as shown in Fig. \ref{fig:roadnetwork}. All nodes have 3 outbound links, except nodes 8, 9 and 10 which have 2, 1 and 0 outbound links, respectively. Nodes 1, 2 and 3 are the possible origins and nodes 8, 9 and 10 are the possible destinations, resulting in nine possible OD pairs. All possible OD pairs have uniform probability of being assigned to a driver. %Table \ref{tab:routeEnum} shows the length and the number of shortest paths between the OD pairs, regarding the number of links between them.
 
 % {%
 % \begin{table}[ht]
@@ -279,7 +281,7 @@ The abstract road network used in this scenario consists of 10 nodes and 24 link
 % \end{table}
 % }%
 
-Links' capacities are randomly assigned in the range [130:250] prior to the simulations. The values are persistent from one simulation to another to ensure a correct comparison of different approaches. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. 
+The capacities of the links are randomly assigned in the range [130:250] prior to the simulations. The values are persistent from one simulation to another to ensure a correct comparison of different approaches. The same is done for the amount of drivers on each OD pair. There are 1001 drivers on the road network. For Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. 
 
 The choice of the range for the selection of links' capacities, the number of drivers and the parameters for Eq. \eqref{eq:tt} were made in this way to compare the results obtained in the present work with the ones obtained by the modified minority game for route choice \cite{Galib&Moser2011}.
 
@@ -287,23 +289,24 @@ The choice of the range for the selection of links' capacities, the number of dr
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=8.5cm]{img/roadnetwork.png}}
-    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers, nodes with upward arrows are the origins and downward arrows represent the destinations}
+    \caption{Road network, the same used by \cite{Galib&Moser2011}. Labels on links are identification numbers, nodes with upward arrows are the origins and downward arrows represent the destinations.}
     \label{fig:roadnetwork}
 \end{figure}
 
 In this scenario, the RL for route choice approach is compared with three different route choice methods, as follows:
 
 \begin{itemize}
-  \item Random: At each step, drivers choose one of the possible outbound links with uniform probability.
-  \item Greedy: At initialization, the shortest paths\footnote{It is possible to have more than one shortest path on the road network. Given that link's weights are equal, the shortest paths are the ones with less links.} for each driver are calculated. At each step, drivers choose one of the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belong to a shortest path. %TODO mention selfish here
-  \item Minority Game: Drivers use the modified minority game approach proposed in \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description, readers may refer to \cite{Galib&Moser2011}.
+  \item Random: At each step, drivers choose the next link with uniform probability.
+  \item Greedy: At initialization, the shortest paths\footnote{The shortest paths are calculated with unitary link weights. Some OD pairs have more than one shortest path in the nine OD pairs scenario.} for each driver are calculated. At each step, drivers select one of the links that belong to a shortest path. The probability of a link being chosen is proportional to its capacity. 
+%drivers choose the possible outbound links with a probability proportional to its capacity. The possible outbound links are the ones that belong to a shortest path. %TODO mention selfish here
+  \item Minority Game: Drivers use the modified minority game approach proposed in \cite{Galib&Moser2011} to build their routes. A brief description of this approach is given in Section \ref{sec:related}. For a complete description, the reader may refer to \cite{Galib&Moser2011}.
 \end{itemize}
 
 The comparison of the different route choice methods is based on metrics regarding the difference between expected and actual travel time as well as on road network load balance.
 
 \subsubsection{Difference between expected and actual travel time:}
 \label{sec:ttMetric}
-In the real world, drivers have an expectation on the trip travel time, the expected load and the links' capacities. In the present work, for each driver $i$, the expected travel time $\ett{\optRoute{i}}$ on his shortest route $\optRoute{i}$ is given by Eq. \eqref{eq:ett}. In this equation, $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh{i}$). This estimation is given by the number of vehicles in driver $i$'s OD pair, plus a random number in the range $[-0,05 \times |D| : 0,05 \times |D|]$, where $|D|$ is the total number of drivers in the scenario. This ``noise'' is to simulate the effect of each driver ``guessing'' the number of vehicles going to the same destination.
+In the real world, drivers have an expectation on the trip travel time, on the expected load and on the capacities of the links. In the present work, for each driver $i$, the expected travel time $\ett{\optRoute{i}}$ on its shortest route $\optRoute{i}$ is given by Eq. \eqref{eq:ett}. In this equation, $\travTime$ is the travel time function defined in Eq. \eqref{eq:tt} applied to the estimated number of vehicles on the same route ($\expVeh{i}$). This estimation is given by the number of vehicles in driver $i$'s OD pair, plus a random number in the range $[-0,05 \times |D| : 0,05 \times |D|]$, where $|D|$ is the total number of drivers in the scenario. This noise is to simulate the effect of each driver guessing the number of vehicles going to the same destination.
 
 \begin{equation}
 \label{eq:ett}
@@ -314,21 +317,21 @@ In order to assess how reasonable the travel times obtained by drivers are, a me
 
 \subsubsection{Road network load balance:}
 \label{sec:loadBalanceMetrics}
-From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link in the network. When the number of vehicles ($\veh_j$) in a given link $j$ becomes greater its capacity ($\linkCap$), the link is congested. Road network load balance is measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, these metrics are measured according to Eq. \eqref{eq:balanceMetrics}. 
+From a global point of view, it is desired that vehicles get distributed proportionally to the capacity of each link in the road network. When the number of vehicles ($\veh_j$) in a given link $j$ becomes greater its capacity ($\linkCap$), the link is congested. Road network load balance is measured in two forms: number of congested links ($n$) and average overload ($o$). Considering $C$ as the set of congested links, these metrics are measured according to Eq. \eqref{eq:balanceMetrics}. 
 
 \begin{equation}
 \label{eq:balanceMetrics}
 \numCong = |\congRoads| \hspace{1.5cm}  \overLoadFactor = \frac{ \sum_{\substack{j \in \congRoads}} \left(\frac{\veh_j}{\linkCap} -1 \right)}{|C|}
 \end{equation}
 
-Both metrics are needed because $n$ alone does not measure how heavily the links are congested, while $o$ does not show how many links are overloaded. For both $n$ and $o$, lower values are preferred, as less links are congested and the severity of congestions is lower.
+Both metrics are needed because $n$ alone does not measure how heavily the links are congested, while $o$ does not show how many links are overloaded. For both $n$ and $o$, lower values are preferred, as this means that less links are congested and the severity of congestions is lower.
 
 \section{Results and discussion}
 \label{sec:results}
 
 The following experiments have the goal of assessing the effect of Q-learning parameters, namely the learning rate ($\alpha$) and the discount rate for future rewards ($\gamma$) in both scenarios, so that these parameters can be adjusted accordingly. Plus, in the nine OD scenario, the RL approach is compared with the random, greedy and minority game based methods for route choice discussed in Section \ref{sec:nineODDescription}.
 
-Experiment parameters' values are: for Eq. \eqref{eq:tt}, $\fftt$ is set as 5 minutes for all links, $\tau = 1$ and $\beta = 2$ making travel time increase quadratically with the number of drivers. Each execution consists of $\numepis = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$.
+Regarding the parameters of the experiments, each execution consists in $\numepis = 100$ learning episodes. The initial and final values for the exploration coefficient are $\epsilon_0 = 1$ and $\epsilon_f = 0.01$, respectively. The value of the multiplicative factor that decreases $\epsilon$ is: $\lambda = \sqrt[100]{\frac{0.01}{1}} = 0.95499$.
 
 
 \subsection{Q-learning parameters in the grid scenario}
@@ -377,7 +380,7 @@ Figure \ref{fig:qLearningAlpha-grid} shows that, for high values of $\alpha$, dr
   \label{fig:qLearningGamma-grid}
 \end{figure}
 
-Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more robustly when $\gamma$ is high. For low values of $\gamma$, the interquartile range is large, which means that drivers are not learning the routes to their destinations or these routes have too many links. This shows that, in traffic scenarios, where the next choice options depend on the current, it is relevant to take into account the outcomes of the subsequent choices, otherwise the next available possibilities will result in a bad overall performance.
+Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more robustly when $\gamma$ is high. For low values of $\gamma$, the interquartile range is large for all metrics, which means that drivers are not learning the routes to their destinations or these routes have too many links. This shows that, in traffic scenarios, where the next choice options depend on the current, it is relevant to take into account the outcomes of the subsequent choices, otherwise the next available possibilities will result in a bad overall performance.
 
 \subsection{Nine OD pairs scenario}
 
@@ -385,7 +388,7 @@ Figure \ref{fig:qLearningGamma-grid} shows that the RL approach performs more ro
 \label{sec:qlParamsNineOD}
 In the nine OD scenario, the effect of Q-learning parameters was measured in terms of drivers' travel time. As this scenario has no loops and the number of possible routes is smaller than in the grid scenario, there is no need to evaluate the number of aborted trips and the mean trip length.
 
-In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in Section \ref{sec:proposal}), the mean travel time for all drivers was registered and averaged over the last 10 episodes.  For each parameter, 10 executions were made to generate the plots displayed on Fig. \ref{fig:qLearningParams}.
+In each execution (the repetition of $\numepis = 100$ episodes of the RL approach described in Section \ref{sec:proposal}), the mean travel time for all drivers was registered and averaged over the last 10 episodes.  For each parameter, 10 executions were made to generate the plots displayed in Fig. \ref{fig:qLearningParams}.
 
 \begin{figure}
   \centering
@@ -397,7 +400,7 @@ In each execution (the repetition of $\numepis = 100$ episodes of the RL approac
     \includegraphics[width=6cm]{img/travelTimeVsGamma.png}
     \label{fig:travelTimeVsGamma}
   }
-  \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time in the nine OD pair scenario. Each parameter value was tested 10 times.}
+  \caption{Box-and-whisker charts showing the effect $\alpha$ and $\gamma$ on travel time in the nine OD pairs scenario.}
   \label{fig:qLearningParams}
 \end{figure}
 
@@ -413,9 +416,9 @@ In the following experiments, the goal is to compare the RL approach with the ra
 
 For the Q-learning update rule (Eq. \ref{eq:qlearning}) of the RL approach, $\alpha$ was set as 0.5 and $\gamma $ was set as 0.9 as these values resulted in good performance on the previous tests (Section \ref{sec:qlParamsNineOD}).
 
-The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown on Fig. \ref{fig:travelTimeComparison}. 
+The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown in Fig. \ref{fig:travelTimeComparison}. 
 
-In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD Pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
+In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=10cm]{img/travelTimeComparison-hatched.png}}
