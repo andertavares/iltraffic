@@ -418,7 +418,7 @@ For the Q-learning update rule (Eq. \ref{eq:qlearning}) of the RL approach, $\al
 
 The AED metric (defined in Section \ref{sec:ttMetric}) for each approach is shown in Fig. \ref{fig:travelTimeComparison}. 
 
-In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, especially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
+In this metric, the RL approach outperforms the others, as reasonable travel times (below drivers' expectation) are achieved in all OD pairs. The minority game approach achieves travel times within expectation in four OD pairs. On the other OD pairs, the performance is still satisfactory, as actual travel times are no longer than five minutes beyond the expected, showing a degree of fairness of the approach. With the greedy method, drivers from five OD pairs have experienced travel times within expectation, but this approach has low fairness because, specially on OD pairs 1-10 and 2-8, actual travel times are far beyond the expected. The worst approach is the random, in which no drivers achieve reasonable travel times.
 
 \begin{figure}[ht]
     \centerline{\includegraphics[width=10cm]{img/travelTimeComparison-hatched.png}}
@@ -440,14 +440,9 @@ In this metric, the RL approach outperforms the others, as reasonable travel tim
   \label{fig:loadBalance}
 \end{figure}
 
+Regarding the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Fig. \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the road network in a proportion that is closer to the links' capacities. The better vehicle distribution explains why the achieved travel times are higher compared to the RL approach: minority game based drivers tend to avoid congested links even when these links would make the drivers arrive at their destinations faster than an uncongested alternative. 
 
-
-
-Using the load balance evaluation metrics defined in Section \ref{sec:loadBalanceMetrics}, Fig. \ref{fig:loadBalance} shows that the minority game based approach achieved the best result. Both the number of congested links and the average overload were the lowest. This means that vehicles were distributed over the network in a proportion that is closer to the links capacity. The better vehicle distribution explains why the achieved travel times are higher compared to the RL approach: minority game based drivers tend to avoid congested links even when these links would make the drivers arrive at their destinations faster than an uncongested alternative. 
-
-The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approach performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
-
-
+The RL based approach achieves good results as the average overload shows that none of the seven congested links (out of 24 links) were heavily congested. Both the random and the greedy approaches performed poorly, as many links were congested in the random approach and links were heavily congested in the greedy approach.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
@@ -456,17 +451,17 @@ In this work we modeled traffic assignment as a reinforcement learning problem a
 
 Using the proposed approach, drivers learned the routes between their origins and destinations in a reasonably complex grid scenario. Note that this is the case because cycles are possible thus the number of possible routes increases. Moreover, drivers learn how to build efficient routes, as the mean trip length and travel time reach lower values for certain parameters' values. In the grid scenario, the proposed approach has proven to be sensitive to the Q-learning update rule parameters. 
 
-Especially when the learning rate is high, the learning process does not converge and several drivers do not find routes to their destinations. Also, the discount rate for future rewards must be high, otherwise drivers will not take into account the future consequences of the current choice, leading to bad options in the subsequent steps.
+Specially when the learning rate is high, the learning process does not converge and several drivers do not find routes to their destinations. Also, the discount rate for future rewards must be high, otherwise drivers will not take into account the future consequences of the current choice, leading to bad options in the subsequent steps.
 
 In the nine OD pairs scenario, our reinforcement learning approach for route choice was helpful in both the individual and the global points of view, as drivers achieve reasonable travel times (within expectation) on average, and traffic is distributed over the network, as links do not get heavily congested.
 
-The RL approach outperformed the other route choice methods regarding drivers' experienced travel time. On average, drivers from all OD pairs achieved reasonable travel times, while the other methods did not achieve this.
+The RL approach outperformed the other route choice methods regarding drivers' experienced travel time. On average, using our approach, drivers from all OD pairs experience reasonable travel times. This is not achieved when the other methods for route choice are used.
 
 %In terms of load distribution over the road network, the proposed RL approach was slightly outperformed by the minority game based approach proposed by \cite{Galib&Moser2011}. 
 
 The proposed approach has the advantage of making realistic assumptions as it only relies on drivers' own experience about the road network (i.e. the experienced travel time). This way, the use of real-time information and historical data of links is not necessary. This makes our approach an attractive and feasible alternative to be used on existing navigation systems, as no new technology is required. That is, as navigation systems are already capable of recording travel time for traversing a given road, the RL approach can be helpful as this is the only information it needs.
 
-Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed by \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms (e.g.: as discussed in Section \ref{sec:il}) for this transportation domain. %TODO further microscopic investigation 
+Further investigation can be conducted to evaluate scenarios with heterogeneous drivers. It would be interesting to investigate whether the RL drivers can adapt themselves to the greedy drivers or even the ones using the minority game approach proposed in \cite{Galib&Moser2011}. Future work can also attempt to investigate joint action learning mechanisms (e.g., as discussed in Section \ref{sec:il}) for this transportation domain. %TODO further microscopic investigation 
 
 \section*{Acknowledgments}
 
