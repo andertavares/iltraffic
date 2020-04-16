@@ -1,0 +1,29 @@
+
+# /
+/lncs
+
+# /paper/
+/paper/routeChoiceViaRL.log
+/paper/*.bbl
+/paper/*.blg
+/paper/routeChoiceViaRL.tex.backup
+/paper/*.aux
+/paper/routeChoiceViaRL_iberamia.log
+/paper/routeChoiceViaRL_iberamia.tex.backup
+/paper/routeChoiceViaRL_RITA.log
+/paper/routeChoiceViaRL_RITA.tex.backup
+
+# /paper/img/
+/paper/img/routeChoiceViaRL.log
+/paper/img/*.bbl
+/paper/img/*.blg
+/paper/img/routeChoiceViaRL.tex.backup
+/paper/img/*.aux
+
+# /paper/refs/
+/paper/refs/routeChoiceViaRL.log
+/paper/refs/*.bbl
+/paper/refs/*.blg
+/paper/refs/routeChoiceViaRL.tex.backup
+/paper/refs/*.aux
+/paper/refs/references.bib.backup
